@@ -2,6 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
 import os
+from dotenv import load_dotenv
+
+# load env data
+load_dotenv()
 
 app = Flask(__name__)
 DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING") # secret connection string
