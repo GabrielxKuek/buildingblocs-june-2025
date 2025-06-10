@@ -7,7 +7,7 @@ import ManageItemsView from "@/components/caregiver/ManageItemsView";
 import RequestsView from "@/components/caregiver/RequestsView";
 
 // api
-import { getPatientItems } from "@/api/patientApi";
+import { getPatientItems } from "@/services/api/patient";
 import { 
     getCaregiverRequests, 
     approveRequest, 
@@ -16,7 +16,7 @@ import {
     updateCaregiverItem,
     deleteCaregiverItem,
     generateImageForItem 
-} from "@/api/caregiver";
+} from "@/services/api/caregiver";
 
 const CaregiverPage = () => {
     const location = useLocation();

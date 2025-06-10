@@ -6,11 +6,11 @@ import PropTypes from "prop-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Check, X, Clock, User, MessageSquare, Calendar } from "lucide-react";
+import { Check, Clock, Calendar } from "lucide-react";
 import Spinner from "@/components/system/Spinner";
+import ModalOverlay from "@/components/system/ModalOverlay";
 
-const RequestsView = ({ requests = [], onApproveRequest, onRejectRequest, loading = false }) => {
+const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
     const [selectedRequest, setSelectedRequest] = useState(null);
 
     const handleRequestClick = (request) => {
@@ -27,16 +27,6 @@ const RequestsView = ({ requests = [], onApproveRequest, onRejectRequest, loadin
         }
     };
 
-    const handleReject = async () => {
-        try {
-            await onRejectRequest(selectedRequest.id);
-            setSelectedRequest(null);
-        } catch (error) {
-            console.error('Error rejecting request:', error);
-            alert('Failed to reject request');
-        }
-    };
-
     const closeModal = () => {
         setSelectedRequest(null);
     };
@@ -44,8 +34,7 @@ const RequestsView = ({ requests = [], onApproveRequest, onRejectRequest, loadin
     const getStatusBadge = (status) => {
         const statusConfig = {
             pending: { variant: "secondary", icon: Clock, label: "Pending" },
-            approved: { variant: "default", icon: Check, label: "Approved" },
-            rejected: { variant: "destructive", icon: X, label: "Rejected" }
+            approved: { variant: "default", icon: Check, label: "Approved" }
         };
 
         const config = statusConfig[status] || statusConfig.pending;
@@ -97,37 +86,35 @@ const RequestsView = ({ requests = [], onApproveRequest, onRejectRequest, loadin
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {getPendingRequests().map((request) => (
-                            <Card 
-                                key={request.id}
-                                className="cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-orange-500"
-                                onClick={() => handleRequestClick(request)}
-                            >
-                                <CardContent className="p-4">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <h4 className="font-semibold">{request.item.name}</h4>
-                                        {getStatusBadge(request.status)}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <User className="h-4 w-4" />
-                                            {request.patientName}
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <Calendar className="h-4 w-4" />
+                    <div className="border rounded-lg overflow-hidden">
+                        <table className="w-full">
+                            <thead className="bg-muted/30">
+                                <tr>
+                                    <th className="text-left p-4 font-medium">Item</th>
+                                    <th className="text-left p-4 font-medium">Time</th>
+                                    <th className="text-left p-4 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {getPendingRequests().map((request) => (
+                                    <tr 
+                                        key={request.id}
+                                        className="border-t hover:bg-muted/20 cursor-pointer"
+                                        onClick={() => handleRequestClick(request)}
+                                    >
+                                        <td className="p-4">
+                                            <span className="font-medium">{request.item.name}</span>
+                                        </td>
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             {formatDate(request.createdAt)}
-                                        </div>
-                                        {request.message && (
-                                            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                                                <MessageSquare className="h-4 w-4 mt-0.5" />
-                                                <p className="line-clamp-2">{request.message}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                        </td>
+                                        <td className="p-4">
+                                            {getStatusBadge(request.status)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>
@@ -146,130 +133,94 @@ const RequestsView = ({ requests = [], onApproveRequest, onRejectRequest, loadin
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {getCompletedRequests().slice(0, 6).map((request) => (
-                            <Card 
-                                key={request.id}
-                                className="cursor-pointer hover:shadow-md transition-all duration-200 opacity-75"
-                                onClick={() => handleRequestClick(request)}
-                            >
-                                <CardContent className="p-4">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <h4 className="font-semibold">{request.item.name}</h4>
-                                        {getStatusBadge(request.status)}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <User className="h-4 w-4" />
-                                            {request.patientName}
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <Calendar className="h-4 w-4" />
+                    <div className="border rounded-lg overflow-hidden">
+                        <table className="w-full">
+                            <thead className="bg-muted/30">
+                                <tr>
+                                    <th className="text-left p-4 font-medium">Item</th>
+                                    <th className="text-left p-4 font-medium">Time</th>
+                                    <th className="text-left p-4 font-medium">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {getCompletedRequests().slice(0, 10).map((request) => (
+                                    <tr 
+                                        key={request.id}
+                                        className="border-t hover:bg-muted/20 cursor-pointer opacity-75"
+                                        onClick={() => handleRequestClick(request)}
+                                    >
+                                        <td className="p-4">
+                                            <span className="font-medium">{request.item.name}</span>
+                                        </td>
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             {formatDate(request.createdAt)}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                        </td>
+                                        <td className="p-4">
+                                            {getStatusBadge(request.status)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>
 
             {/* Request Detail Modal */}
             {selectedRequest && (
-                <Dialog open={!!selectedRequest} onOpenChange={closeModal}>
-                    <DialogContent className="max-w-md">
-                        <DialogHeader>
-                            <DialogTitle className="flex items-center justify-between">
-                                <span>Request Details</span>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={closeModal}
-                                    className="h-8 w-8 p-0"
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
-                            </DialogTitle>
-                        </DialogHeader>
-
-                        <div className="space-y-6">
-                            {/* Request Item */}
-                            <div className="text-center">
-                                <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">
-                                    {selectedRequest.item.type === 'video' ? (
-                                        <video 
-                                            src={selectedRequest.item.imageUrl} 
-                                            className="w-full h-full object-cover"
-                                            muted
-                                            loop
-                                        />
-                                    ) : (
-                                        <img 
-                                            src={selectedRequest.item.imageUrl} 
-                                            alt={selectedRequest.item.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    )}
-                                </div>
-                                <h3 className="text-xl font-bold mb-2">{selectedRequest.item.name}</h3>
-                                {getStatusBadge(selectedRequest.status)}
-                            </div>
-
-                            {/* Request Info */}
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <User className="h-5 w-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="font-medium">{selectedRequest.patientName}</p>
-                                        <p className="text-sm text-muted-foreground">Patient</p>
+                <ModalOverlay show={!!selectedRequest} onClose={closeModal}>
+                    <Card className="max-w-md mx-auto">
+                        <CardContent className="p-6">
+                            <div className="space-y-6">
+                                {/* Request Item */}
+                                <div className="text-center">
+                                    <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">
+                                        {selectedRequest.item.type === 'video' ? (
+                                            <video 
+                                                src={selectedRequest.item.imageUrl} 
+                                                className="w-full h-full object-cover"
+                                                muted
+                                                loop
+                                            />
+                                        ) : (
+                                            <img 
+                                                src={selectedRequest.item.imageUrl} 
+                                                alt={selectedRequest.item.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        )}
                                     </div>
-                                </div>
-                                
-                                <div className="flex items-center gap-3">
-                                    <Calendar className="h-5 w-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="font-medium">{formatDate(selectedRequest.createdAt)}</p>
-                                        <p className="text-sm text-muted-foreground">Request Time</p>
-                                    </div>
+                                    <h3 className="text-xl font-bold mb-2">{selectedRequest.item.name}</h3>
+                                    {getStatusBadge(selectedRequest.status)}
                                 </div>
 
-                                {selectedRequest.message && (
-                                    <div className="flex items-start gap-3">
-                                        <MessageSquare className="h-5 w-5 text-muted-foreground mt-1" />
+                                {/* Request Info */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <Calendar className="h-5 w-5 text-muted-foreground" />
                                         <div>
-                                            <p className="font-medium mb-1">Message</p>
-                                            <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
-                                                {selectedRequest.message}
-                                            </p>
+                                            <p className="font-medium">{formatDate(selectedRequest.createdAt)}</p>
+                                            <p className="text-sm text-muted-foreground">Request Time</p>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                {selectedRequest.status === 'pending' && (
+                                    <div className="flex gap-3">
+                                        <Button 
+                                            onClick={handleApprove}
+                                            className="flex-1"
+                                        >
+                                            <Check className="h-4 w-4 mr-2" />
+                                            Approve
+                                        </Button>
                                     </div>
                                 )}
                             </div>
-
-                            {/* Action Buttons */}
-                            {selectedRequest.status === 'pending' && (
-                                <div className="flex gap-3">
-                                    <Button 
-                                        onClick={handleApprove}
-                                        className="flex-1"
-                                    >
-                                        <Check className="h-4 w-4 mr-2" />
-                                        Approve
-                                    </Button>
-                                    <Button 
-                                        onClick={handleReject}
-                                        variant="destructive"
-                                        className="flex-1"
-                                    >
-                                        <X className="h-4 w-4 mr-2" />
-                                        Reject
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                        </CardContent>
+                    </Card>
+                </ModalOverlay>
             )}
         </div>
     );
