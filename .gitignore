@@ -1,5 +1,13 @@
 .env
 */node_modules/*
-server/buildingblocsjune2025
 */package-lock.json
 *.crt
+server/buildingblocsjune2025/Lib/
+server/buildingblocsjune2025/Include/
+server/buildingblocsjune2025/Scripts/
+server/buildingblocsjune2025/share/
+server/buildingblocsjune2025/pyvenv.cfg
+server/buildingblocsjune2025/__pycache__/
+server/buildingblocsjune2025/etc
+server/buildingblocsjune2025/var
+server/buildingblocsjune2025/test_connection.py
