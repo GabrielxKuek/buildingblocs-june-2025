@@ -3,22 +3,23 @@ import PropTypes from "prop-types"
 
 // components
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Send, Volume2 } from "lucide-react"
+import ModalOverlay from '@/components/system/ModalOverlay';
 
 const ItemModal = ({ item, onClose, onSendToCaretaker, onSpeak }) => {
     if (!item) return null;
 
     return (
-        <Dialog open={!!item} onOpenChange={onClose}>
-            <DialogContent className="max-w-md mx-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-center">
+        <ModalOverlay show={!!item} onClose={onClose}>
+            <Card className="max-w-md mx-auto">
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold text-center">
                         {item.name}
-                    </DialogTitle>
-                </DialogHeader>
+                    </CardTitle>
+                </CardHeader>
 
-                <div className="space-y-6">
+                <CardContent className="space-y-6">
                     {/* supports image and video */}
                     <div className="aspect-square relative overflow-hidden rounded-lg">
                         {item.type === 'video' ? (
@@ -58,9 +59,9 @@ const ItemModal = ({ item, onClose, onSendToCaretaker, onSpeak }) => {
                             <Volume2 className="h-5 w-5" />
                         </Button>
                     </div>
-                </div>
-            </DialogContent>
-        </Dialog>
+                </CardContent>
+            </Card>
+        </ModalOverlay>
     );
 };
 

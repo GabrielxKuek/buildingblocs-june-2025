@@ -10,24 +10,20 @@ import Navbar from "@/components/system/Navbar"
 import Sidebar from "@/components/system/Sidebar"
 
 function App() {
+  const handleCreateItem = async (itemData) => {
+    console.log('Create item:', itemData);
+  };
+
   return (
     <BrowserRouter>
       <div className="h-screen flex flex-col">
-        {/* navbar */}
         <Navbar/>
-
-        {/* main layout */}
         <div className="flex flex-1 overflow-hidden">
-          {/* sidebar */}
-          <Sidebar />
-          
-          {/* content */}
+          <Sidebar onCreateItem={handleCreateItem} />
           <main className="flex-1 overflow-auto p-6">
             <Routes>
               <Route path="/test" element={<TestPage />} />
-              <Route path="/caregiver" element={<CaregiverPage />} />
               <Route path="/caregiver/*" element={<CaregiverPage />} />
-              <Route path="/patient" element={<PatientPage />} />
               <Route path="/patient/*" element={<PatientPage />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
