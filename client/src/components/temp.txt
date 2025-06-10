@@ -1,0 +1,7 @@
+just here so the directory gets pushed too
+
+include in here the components that the pages require
+
+this is so its more organised. the pages dont handle creating functions, and we dont need to scroll through so much code just to edit something in one components
+
+each page's component should have its own folder

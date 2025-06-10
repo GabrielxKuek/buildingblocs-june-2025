@@ -1,0 +1,5 @@
+just here so the directory gets pushed toojust here so the directory gets pushed too
+
+include in here the library configurations that the application required
+
+eg if we are using firebase, stuff like firebase configuration and functions can be put into firebase.js
