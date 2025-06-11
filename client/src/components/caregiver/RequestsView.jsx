@@ -27,10 +27,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
         }
     };
 
-    const closeModal = () => {
-        setSelectedRequest(null);
-    };
-
     const getStatusBadge = (status) => {
         const statusConfig = {
             pending: { variant: "secondary", icon: Clock, label: "Pending" },
