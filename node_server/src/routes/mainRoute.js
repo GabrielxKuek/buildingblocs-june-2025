@@ -1,9 +1,9 @@
 import express from "express";
-import aiRoute from "./aiRoute.js";
+import mediaRoute from "./mediaRoute.js";
 
 // setup the router
 const router = express.Router();
 
-router.use('/ai', aiRoute);
+router.use('/media', mediaRoute);
 
 export default router;

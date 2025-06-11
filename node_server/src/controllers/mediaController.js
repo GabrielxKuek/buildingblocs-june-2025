@@ -1,0 +1,148 @@
+import * as model from '../models/mediaModel.js';
+import * as aiService from '../services/aiService.js';
+import { createClient } from "@supabase/supabase-js";
+
+// ----- Initialize Supabase client -----
+const supabase = createClient(
+  process.env.DB_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY, 
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  }
+
+);
+
+// convert text prompts to image using Google GenAI
+export const convertTextToImage = async (req, res, next) => {
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: '{Prompt is missing!' });
+    }
+
+    const response = await aiService.textToImage(prompt);
+    if (!response) {
+      return res.status(500).json({ error: 'Failed to generate image' });
+    }
+
+    res.locals.imageResponse = response;
+    next();
+  } catch (error) {
+    console.error('Error in meidaController:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+// conver text to prompts to video using runway ai
+export const convertTextToVideo = async (req, res, next) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is missing!' });
+    }
+
+    const video_url = await aiService.textToVideo(prompt);
+    if (!video_url) {
+      return res.status(500).json({ error: 'Failed to generate video' });
+    }
+
+    res.locals.video_url = video_url;
+    next();
+  } catch (error) {
+    console.error('Error in mediaController:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+// Function to upload image in supabase
+export const uploadImage = async (req, res) => {
+  try {
+    const { imageResponse } = res.locals;
+    const { prompt } = req.body;
+
+    let response;
+
+    for (const part of imageResponse.candidates[0].content.parts) {
+      if(part.text) {
+
+        console.log('Text found:', part.text);
+      } 
+      else if (part.inlineData) {
+        const imageData = part.inlineData.data;
+        const buffer = Buffer.from(imageData, 'base64');
+        const fileName = `image-${Date.now()}.png`;
+
+        // Use supabase client to for storage upload
+        const { data, error } = await supabase.storage
+          .from('generated-media')
+          .upload(fileName, buffer, {
+            contentType: 'image/png',
+            cacheControl: '3600'
+          });
+
+        if (error) {
+          throw new Error (`Upload failed: ${error.message}`);
+        }
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('generated-media')
+          .getPublicUrl(fileName);
+
+        const image_url = urlData.publicUrl;
+        console.log('Image uploaded successfully:', image_url);
+        const media_type = 'image';
+        const tag_id = 1;
+        response = await model.saveImage(image_url, prompt, fileName, media_type, tag_id);
+      }
+    }
+
+    if(response) {
+      res.status(200).json({
+        message: 'Image uploaded successfully',
+        imageUrl: response.image_url,
+        prompt: response.prompt,
+        fileName: response.file_name
+      })
+    } else {
+      res.status(500).json({ error: 'Failed to save image data' });
+    }
+
+  } catch (error) {
+    console.error('Error in uploadMedia:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+// Function to upload video in supabase
+export const uploadVideo = async (req, res) => {
+  try {
+    const { video_url } = res.locals;
+    const { prompt } = req.body;
+
+    const fileName = `video-${Date.now()}`;
+    const media_type = 'video';
+    const tag_id = 1;
+
+    const response = await model.saveVideo(video_url, prompt, fileName, media_type, tag_id);
+
+    if(response) {
+      res.status(200).json({
+        message: 'VIdeo uploaded successfully',
+        imageUrl: response.video_url,
+        prompt: response.prompt,
+        fileName: response.fileName
+      })
+    } else {
+      res.status(500).json({ error: 'Failed to save image data' });
+    }
+
+  } catch (error) {
+    console.error('Error in uploadMedia:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
