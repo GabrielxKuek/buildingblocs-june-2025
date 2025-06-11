@@ -40,12 +40,12 @@ export const convertTextToImage = async (req, res, next) => {
 // conver text to prompts to video using runway ai
 export const convertTextToVideo = async (req, res, next) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, imageUrl } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is missing!' });
     }
 
-    const video_url = await aiService.textToVideo(prompt);
+    const video_url = await aiService.textToVideo(prompt, imageUrl);
     if (!video_url) {
       return res.status(500).json({ error: 'Failed to generate video' });
     }
@@ -140,9 +140,8 @@ export const uploadVideo = async (req, res) => {
     } else {
       res.status(500).json({ error: 'Failed to save image data' });
     }
-
   } catch (error) {
-    console.error('Error in uploadMedia:', error);
+    console.error('Error in uploadVideo2:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
