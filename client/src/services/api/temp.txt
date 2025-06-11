@@ -1,5 +1,0 @@
-just here so the directory gets pushed too
-
-include in here the api calls that the pages make
-
-this is so it smore organised. the pages dont handle api logic

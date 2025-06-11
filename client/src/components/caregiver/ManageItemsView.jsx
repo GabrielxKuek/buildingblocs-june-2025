@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Trash2, Wand2, Save, X } from "lucide-react";
+import { Edit, Trash2, Wand2, Save } from "lucide-react";
 import Spinner from "@/components/system/Spinner";
 
 const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateImage, loading = false }) => {
@@ -131,14 +131,6 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                         <DialogHeader>
                             <DialogTitle className="flex items-center justify-between">
                                 <span>Manage Item</span>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={closeModal}
-                                    className="h-8 w-8 p-0"
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
                             </DialogTitle>
                         </DialogHeader>
 
