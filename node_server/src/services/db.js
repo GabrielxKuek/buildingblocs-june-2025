@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-import pkg from 'pg';
+import dotenv from "dotenv";
+import pkg from "pg";
 
 const { Pool } = pkg;
 
@@ -17,7 +17,6 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
 });
-
 
 // Export the pool for use in other modules
 export default pool;
