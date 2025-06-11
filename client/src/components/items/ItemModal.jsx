@@ -51,7 +51,7 @@ const ItemModal = ({ item, onClose, onSendToCaretaker, onSpeak }) => {
                         </Button>
 
                         <Button 
-                            onClick={() => onSpeak(item)}
+                            onClick={() => onSpeak(item.name)}
                             className="h-12 px-4"
                             variant="outline"
                         >
@@ -65,7 +65,11 @@ const ItemModal = ({ item, onClose, onSendToCaretaker, onSpeak }) => {
 };
 
 ItemModal.propTypes = {
-    item: PropTypes.node.isRequired,
+    item: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        imageUrl: PropTypes.string.isRequired,
+    }),
     onClose: PropTypes.func.isRequired,
     onSendToCaretaker: PropTypes.func.isRequired,
     onSpeak: PropTypes.func.isRequired,

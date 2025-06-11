@@ -25,9 +25,11 @@ const PatientItemsView = ({ items = [], onSendToCaregiver, loading = false }) =>
         closeModal();
     };
 
-    const handleSpeak = (item) => {
-        console.log(item.name + " is trying to talk");
-        // TODO: Implement text-to-speech functionality
+    const handleSpeak = (itemName) => {
+        console.log(`Speaking item name: ${itemName}`);
+        const utterance = new SpeechSynthesisUtterance(itemName);
+        speechSynthesis.speak(utterance);
+        console.log('Speaking done!');
     };
 
     if (loading) {

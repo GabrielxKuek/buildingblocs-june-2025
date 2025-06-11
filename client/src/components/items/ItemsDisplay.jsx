@@ -25,8 +25,11 @@ const ItemsDisplay = ({ items = [], onSendToCaregiver, loading = false }) => {
         closeModal();
     };
 
-    const handleSpeak = (item) => {
-        console.log(item + "is trying to talk")
+    const handleSpeak = (itemName) => {
+        console.log(`Speaking item name: ${itemName}`);
+        const utterance = new SpeechSynthesisUtterance(itemName);
+        speechSynthesis.speak(utterance);
+        console.log('Speaking done!');
     };
 
     if (loading) {
