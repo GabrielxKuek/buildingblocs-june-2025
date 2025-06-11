@@ -45,12 +45,12 @@ export const convertTextToVideo = async (req, res, next) => {
       return res.status(400).json({ error: 'Prompt is missing!' });
     }
 
-    const video_url = await aiService.textToVideo(prompt, imageUrl);
-    if (!video_url) {
+    const response = await aiService.textToVideo(prompt, imageUrl);
+    if (!response) {
       return res.status(500).json({ error: 'Failed to generate video' });
     }
 
-    res.locals.video_url = video_url;
+    res.locals.video_url = response.videoUrl;
     next();
   } catch (error) {
     console.error('Error in mediaController:', error);
@@ -142,6 +142,43 @@ export const uploadVideo = async (req, res) => {
     }
   } catch (error) {
     console.error('Error in uploadVideo2:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+// Function to get all the images
+export const fetchALlImages = async (req, res) => {
+  try {
+    const response = await model.getAllImages();
+    if (response && response.rows.length > 0) {
+      res.status(200).json({
+        message: 'Images fetched successfully',
+        images: response.rows
+      });
+    } else {
+      res.status(404).json({ message: 'No images found' });
+    }
+  } catch (error) {
+    console.error('Error in fetchImages:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+
+// Function to get all the videos
+export const fetchAllVideos = async (req, res) => {
+  try {
+    const response = await model.getAllVideos();
+    if (response && response.rows.length > 0) {
+      res.status(200).json({
+        message: 'Videos fetched successfully',
+        videos: response.rows
+      });
+    } else {
+      res.status(404).json({ message: 'No videos found' });
+    }
+  } catch (error) {
+    console.error('Error in fetchVideos:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }

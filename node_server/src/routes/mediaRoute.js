@@ -8,5 +8,7 @@ router.post('/generateImage', mediaController.convertTextToImage, mediaControlle
 router.post('/generateVideo', mediaController.convertTextToVideo, mediaController.uploadVideo);
 
 // --- Retrieval ---
+router.get('/fetchAllImages', mediaController.fetchALlImages);
+router.get('/fetchAllVideos', mediaController.fetchAllVideos);
 
 export default router;

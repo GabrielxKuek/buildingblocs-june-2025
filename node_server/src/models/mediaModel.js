@@ -34,3 +34,33 @@ export const saveVideo = async (video_url, prompt, fileName, media_type, tag_id)
     throw error;
   }
 }
+
+export const getAllImages = async () => {
+  try {
+    const query = `SELECT media_url, media_name FROM generated_media 
+                  WHERE media_type = 'image' 
+                  ORDER BY created_at DESC;`;
+
+    const result = await pool.query(query);
+    return result;
+  } catch (error) {
+    console.error('Error fetching all images:', error);
+    throw error;
+  }
+}
+
+// Function to get all videos
+export const getAllVideos = async () => {
+  try {
+    const query = `SELECT media_url, media_name FROM generated_media 
+                  WHERE media_type = 'video' 
+                  ORDER BY created_at DESC;`;
+
+    const result = await pool.query(query);
+    return result;
+  }
+  catch (error) {
+    console.error('Error fetching all videos:', error);
+    throw error;
+  }
+}
