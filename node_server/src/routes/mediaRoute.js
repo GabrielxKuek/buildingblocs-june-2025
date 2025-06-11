@@ -11,4 +11,6 @@ router.post('/generateVideo', mediaController.convertTextToVideo, mediaControlle
 router.get('/fetchAllImages', mediaController.fetchALlImages);
 router.get('/fetchAllVideos', mediaController.fetchAllVideos);
 
+
+
 export default router;

@@ -5,8 +5,6 @@ import { useLocation, Navigate } from "react-router-dom";
 // components
 import ManageItemsView from "@/components/caregiver/ManageItemsView";
 import RequestsView from "@/components/caregiver/RequestsView";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 
 // api
 import { getPatientItems } from "@/services/api/patient";
@@ -15,6 +13,7 @@ import {
     approveRequest, 
     rejectRequest,
     createCaregiverItem,
+    createCaregiverVideo,
     updateCaregiverItem,
     deleteCaregiverItem,
     generateImageForItem 
@@ -25,7 +24,6 @@ const CaregiverPage = () => {
     const [items, setItems] = useState([]);
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
 
     useEffect(() => {
         loadInitialData();
@@ -34,24 +32,32 @@ const CaregiverPage = () => {
     const loadInitialData = async () => {
         try {
             setLoading(true);
-            setError('');
             const [itemsData, requestsData] = await Promise.all([
-                getPatientItems(),
+                getPatientItems(), // Get all items from the backend
                 getCaregiverRequests()
             ]);
             setItems(itemsData);
             setRequests(requestsData);
         } catch (error) {
             console.error('Error loading initial data:', error);
-            setError('Failed to load data');
+            alert('Failed to load data');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleCreateItem = async (itemData) => {
+    const handleCreateItem = async (itemData, onProgress = null) => {
         try {
-            const newItem = await createCaregiverItem(itemData);
+            let newItem;
+            
+            if (itemData.type === 'video') {
+                // Generate video with progress tracking
+                newItem = await createCaregiverVideo(itemData, onProgress);
+            } else {
+                // Generate image with progress tracking (default)
+                newItem = await createCaregiverItem(itemData, onProgress);
+            }
+            
             setItems(prev => [...prev, newItem]);
         } catch (error) {
             console.error('Error creating item:', error);
@@ -119,36 +125,12 @@ const CaregiverPage = () => {
         }
     };
 
-    const clearError = () => {
-        setError('');
-    };
-
     if (location.pathname === '/caregiver') {
         return <Navigate to="/caregiver/manage" replace />;
     }
 
     const isManagePage = location.pathname === '/caregiver/manage';
     const isRequestsPage = location.pathname === '/caregiver/requests';
-
-    // Show error at the page level if initial data loading failed
-    if (error && !loading) {
-        return (
-            <div className="p-6">
-                <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="flex items-center justify-between">
-                        <span>{error}</span>
-                        <button 
-                            onClick={loadInitialData}
-                            className="ml-4 underline hover:no-underline"
-                        >
-                            Try Again
-                        </button>
-                    </AlertDescription>
-                </Alert>
-            </div>
-        );
-    }
 
     if (isManagePage) {
         return (
