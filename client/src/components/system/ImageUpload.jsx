@@ -5,7 +5,8 @@ import PropTypes from "prop-types";
 // components
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Upload, X } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Upload, X, AlertCircle } from "lucide-react";
 
 const ImageUpload = ({ 
     onImageChange, 
@@ -17,6 +18,7 @@ const ImageUpload = ({
 }) => {
     const [preview, setPreview] = useState(null);
     const [dragActive, setDragActive] = useState(false);
+    const [error, setError] = useState('');
 
     const validateFile = (file) => {
         if (!file.type.startsWith('image/')) {
@@ -36,6 +38,9 @@ const ImageUpload = ({
         try {
             validateFile(file);
             
+            // Clear any previous errors
+            setError('');
+            
             // create preview URL
             const previewUrl = URL.createObjectURL(file);
             setPreview(previewUrl);
@@ -45,7 +50,7 @@ const ImageUpload = ({
                 onImageChange(file, previewUrl);
             }
         } catch (error) {
-            alert(error.message);
+            setError(error.message);
         }
     };
 
@@ -80,6 +85,7 @@ const ImageUpload = ({
             URL.revokeObjectURL(preview);
         }
         setPreview(null);
+        setError('');
         
         // clear file input
         const input = document.getElementById('image-upload-input');
@@ -96,6 +102,14 @@ const ImageUpload = ({
     return (
         <div className={`space-y-2 ${className}`}>
             {label && <Label>{label}</Label>}
+            
+            {/* Error Alert */}
+            {error && (
+                <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
             
             {preview ? (
                 // preview mode

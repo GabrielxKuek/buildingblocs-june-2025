@@ -4,39 +4,44 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react"
 
 const CreateItemModalCaregiver = ({ show, onClose, onCreateItem }) => {
     const [formData, setFormData] = useState({
         name: ''
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
             ...prev,
             [field]: value
         }));
+        
+        if (error) setError('');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (!formData.name.trim()) {
-            alert('Please enter an item name');
+            setError('Please enter an item name');
             return;
         }
 
         setLoading(true);
+        setError('');
         
         try {
             const itemData = {
                 name: formData.name,
-                id: Date.now() // Simple ID generation
+                id: Date.now()
             };
 
             await onCreateItem(itemData);
             
-            // Reset form
             setFormData({
                 name: ''
             });
@@ -44,7 +49,7 @@ const CreateItemModalCaregiver = ({ show, onClose, onCreateItem }) => {
             onClose();
         } catch (error) {
             console.error('Error creating item:', error);
-            alert('Failed to create item');
+            setError('Failed to create item');
         } finally {
             setLoading(false);
         }
@@ -55,6 +60,7 @@ const CreateItemModalCaregiver = ({ show, onClose, onCreateItem }) => {
             setFormData({
                 name: ''
             });
+            setError('');
             onClose();
         }
     };
@@ -68,6 +74,14 @@ const CreateItemModalCaregiver = ({ show, onClose, onCreateItem }) => {
 
                 <div>
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Error Alert */}
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
+
                         {/* Item Name */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Item Name</Label>

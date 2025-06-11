@@ -8,7 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Trash2, Wand2, Save } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Edit, Trash2, Wand2, Save, AlertCircle } from "lucide-react";
 import Spinner from "@/components/system/Spinner";
 
 const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateImage, loading = false }) => {
@@ -16,11 +18,13 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
     const [editMode, setEditMode] = useState(false);
     const [editData, setEditData] = useState({ name: '' });
     const [isGenerating, setIsGenerating] = useState(false);
+    const [error, setError] = useState('');
 
     const handleItemClick = (item) => {
         setSelectedItem(item);
         setEditData({ name: item.name });
         setEditMode(false);
+        setError('');
     };
 
     const handleEditToggle = () => {
@@ -28,26 +32,29 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
         if (!editMode) {
             setEditData({ name: selectedItem.name });
         }
+        setError('');
     };
 
     const handleSaveChanges = async () => {
         if (!editData.name.trim()) {
-            alert('Item name cannot be empty');
+            setError('Item name cannot be empty');
             return;
         }
 
         try {
+            setError('');
             await onUpdateItem(selectedItem.id, editData);
             setSelectedItem({ ...selectedItem, ...editData });
             setEditMode(false);
         } catch (error) {
             console.error('Error updating item:', error);
-            alert('Failed to update item');
+            setError('Failed to update item');
         }
     };
 
     const handleGenerateNewImage = async () => {
         setIsGenerating(true);
+        setError('');
         try {
             const newImageUrl = await onGenerateImage(selectedItem.name);
             const updatedItem = { ...selectedItem, imageUrl: newImageUrl };
@@ -55,27 +62,27 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
             setSelectedItem(updatedItem);
         } catch (error) {
             console.error('Error generating image:', error);
-            alert('Failed to generate new image');
+            setError('Failed to generate new image');
         } finally {
             setIsGenerating(false);
         }
     };
 
     const handleDeleteItem = async () => {
-        if (window.confirm(`Are you sure you want to delete "${selectedItem.name}"?`)) {
-            try {
-                await onDeleteItem(selectedItem.id);
-                setSelectedItem(null);
-            } catch (error) {
-                console.error('Error deleting item:', error);
-                alert('Failed to delete item');
-            }
+        try {
+            setError('');
+            await onDeleteItem(selectedItem.id);
+            setSelectedItem(null);
+        } catch (error) {
+            console.error('Error deleting item:', error);
+            setError('Failed to delete item');
         }
     };
 
     const closeModal = () => {
         setSelectedItem(null);
         setEditMode(false);
+        setError('');
     };
 
     if (loading) {
@@ -135,6 +142,14 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                         </DialogHeader>
 
                         <div className="space-y-6">
+                            {/* Error Alert */}
+                            {error && (
+                                <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            )}
+
                             {/* Item Image */}
                             <div className="aspect-square relative overflow-hidden rounded-lg">
                                 {selectedItem.type === 'video' ? (
@@ -161,7 +176,10 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                                     <Input
                                         id="itemName"
                                         value={editData.name}
-                                        onChange={(e) => setEditData({ name: e.target.value })}
+                                        onChange={(e) => {
+                                            setEditData({ name: e.target.value });
+                                            if (error) setError('');
+                                        }}
                                         placeholder="Enter item name..."
                                         autoFocus
                                     />
@@ -214,14 +232,31 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                                             </Button>
                                         </div>
                                         
-                                        <Button 
-                                            onClick={handleDeleteItem}
-                                            variant="destructive"
-                                            className="w-full"
-                                        >
-                                            <Trash2 className="h-4 w-4 mr-2" />
-                                            Delete Item
-                                        </Button>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button 
+                                                    variant="destructive"
+                                                    className="w-full"
+                                                >
+                                                    <Trash2 className="h-4 w-4 mr-2" />
+                                                    Delete Item
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        This will permanently delete &quot;{selectedItem.name}&quot;. This action cannot be undone.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction onClick={handleDeleteItem}>
+                                                        Delete
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </>
                                 )}
                             </div>

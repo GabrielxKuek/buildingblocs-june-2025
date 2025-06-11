@@ -7,23 +7,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Check, Clock, Calendar } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Check, Clock, Calendar, AlertCircle } from "lucide-react";
 import Spinner from "@/components/system/Spinner";
 
 const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
     const [selectedRequest, setSelectedRequest] = useState(null);
+    const [error, setError] = useState('');
 
     const handleRequestClick = (request) => {
         setSelectedRequest(request);
+        setError('');
     };
 
     const handleApprove = async () => {
         try {
+            setError('');
             await onApproveRequest(selectedRequest.id);
             setSelectedRequest(null);
         } catch (error) {
             console.error('Error approving request:', error);
-            alert('Failed to approve request');
+            setError('Failed to approve request');
         }
     };
 
@@ -56,6 +60,11 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
 
     const getPendingRequests = () => requests.filter(req => req.status === 'pending');
     const getCompletedRequests = () => requests.filter(req => req.status !== 'pending');
+
+    const closeModal = () => {
+        setSelectedRequest(null);
+        setError('');
+    };
 
     if (loading) {
         return <Spinner message="Loading Requests..." />;
@@ -163,7 +172,7 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
             </div>
 
             {/* Request Detail Dialog */}
-            <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
+            <Dialog open={!!selectedRequest} onOpenChange={closeModal}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
                         <DialogTitle>Request Details</DialogTitle>
@@ -171,6 +180,14 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                     
                     {selectedRequest && (
                         <div className="space-y-6">
+                            {/* Error Alert */}
+                            {error && (
+                                <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            )}
+
                             {/* Request Item */}
                             <div className="text-center">
                                 <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">
@@ -227,8 +244,7 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
 RequestsView.propTypes = {
     requests: PropTypes.array,
     onApproveRequest: PropTypes.func.isRequired,
-    onRejectRequest: PropTypes.func.isRequired,
     loading: PropTypes.bool,
 };
 
-export default RequestsView;
+export default RequestsView

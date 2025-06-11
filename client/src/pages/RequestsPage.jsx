@@ -7,38 +7,44 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Check, X, Clock, User, MessageSquare, Calendar } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Check, X, Clock, User, MessageSquare, Calendar, AlertCircle } from "lucide-react";
 import Spinner from "@/components/system/Spinner";
 
 const RequestsPage = ({ requests = [], onApproveRequest, onRejectRequest, loading = false }) => {
     const [selectedRequest, setSelectedRequest] = useState(null);
+    const [error, setError] = useState('');
 
     const handleRequestClick = (request) => {
         setSelectedRequest(request);
+        setError('');
     };
 
     const handleApprove = async () => {
         try {
+            setError('');
             await onApproveRequest(selectedRequest.id);
             setSelectedRequest(null);
         } catch (error) {
             console.error('Error approving request:', error);
-            alert('Failed to approve request');
+            setError('Failed to approve request');
         }
     };
 
     const handleReject = async () => {
         try {
+            setError('');
             await onRejectRequest(selectedRequest.id);
             setSelectedRequest(null);
         } catch (error) {
             console.error('Error rejecting request:', error);
-            alert('Failed to reject request');
+            setError('Failed to reject request');
         }
     };
 
     const closeModal = () => {
         setSelectedRequest(null);
+        setError('');
     };
 
     const getStatusBadge = (status) => {
@@ -198,6 +204,14 @@ const RequestsPage = ({ requests = [], onApproveRequest, onRejectRequest, loadin
                         </DialogHeader>
 
                         <div className="space-y-6">
+                            {/* Error Alert */}
+                            {error && (
+                                <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            )}
+
                             {/* Request Item */}
                             <div className="text-center">
                                 <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">

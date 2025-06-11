@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { X, Upload, Image as ImageIcon } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { X, Upload, Image as ImageIcon, AlertCircle } from "lucide-react"
 
 const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
     const [formData, setFormData] = useState({
@@ -13,30 +14,33 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
         imagePreview: null
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
             ...prev,
             [field]: value
         }));
+        
+        if (error) setError('');
     };
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
+        // validate file type
         if (file) {
-            // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Please select a valid image file');
+                setError('Please select a valid image file');
                 return;
             }
 
-            // Validate file size (e.g., 5MB limit)
             if (file.size > 5 * 1024 * 1024) {
-                alert('File size must be less than 5MB');
+                setError('File size must be less than 5MB');
                 return;
             }
 
-            // Create preview URL
+            setError('');
+
             const previewUrl = URL.createObjectURL(file);
             
             setFormData(prev => ({
@@ -62,21 +66,22 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
         e.preventDefault();
         
         if (!formData.name.trim()) {
-            alert('Please enter an item name');
+            setError('Please enter an item name');
             return;
         }
 
         if (!formData.imageFile) {
-            alert('Please upload an image');
+            setError('Please upload an image');
             return;
         }
 
         setLoading(true);
+        setError('');
         
         try {
             const itemData = {
                 name: formData.name,
-                id: Date.now(), // Simple ID generation
+                id: Date.now(),
                 imageFile: formData.imageFile
             };
 
@@ -95,7 +100,7 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
             onClose();
         } catch (error) {
             console.error('Error creating item:', error);
-            alert('Failed to create item');
+            setError('Failed to create item');
         } finally {
             setLoading(false);
         }
@@ -111,6 +116,7 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
                 imageFile: null,
                 imagePreview: null
             });
+            setError('');
             onClose();
         }
     };
@@ -124,6 +130,14 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
 
                 <div>
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Error Alert */}
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
+
                         {/* Item Name */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Item Name</Label>
