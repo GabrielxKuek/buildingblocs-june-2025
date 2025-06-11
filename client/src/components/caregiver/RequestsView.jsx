@@ -6,9 +6,9 @@ import PropTypes from "prop-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Check, Clock, Calendar } from "lucide-react";
 import Spinner from "@/components/system/Spinner";
-import ModalOverlay from "@/components/system/ModalOverlay";
 
 const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
     const [selectedRequest, setSelectedRequest] = useState(null);
@@ -25,10 +25,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
             console.error('Error approving request:', error);
             alert('Failed to approve request');
         }
-    };
-
-    const closeModal = () => {
-        setSelectedRequest(null);
     };
 
     const getStatusBadge = (status) => {
@@ -166,62 +162,64 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                 )}
             </div>
 
-            {/* Request Detail Modal */}
-            {selectedRequest && (
-                <ModalOverlay show={!!selectedRequest} onClose={closeModal}>
-                    <Card className="max-w-md mx-auto">
-                        <CardContent className="p-6">
-                            <div className="space-y-6">
-                                {/* Request Item */}
-                                <div className="text-center">
-                                    <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">
-                                        {selectedRequest.item.type === 'video' ? (
-                                            <video 
-                                                src={selectedRequest.item.imageUrl} 
-                                                className="w-full h-full object-cover"
-                                                muted
-                                                loop
-                                            />
-                                        ) : (
-                                            <img 
-                                                src={selectedRequest.item.imageUrl} 
-                                                alt={selectedRequest.item.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                    <h3 className="text-xl font-bold mb-2">{selectedRequest.item.name}</h3>
-                                    {getStatusBadge(selectedRequest.status)}
+            {/* Request Detail Dialog */}
+            <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Request Details</DialogTitle>
+                    </DialogHeader>
+                    
+                    {selectedRequest && (
+                        <div className="space-y-6">
+                            {/* Request Item */}
+                            <div className="text-center">
+                                <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">
+                                    {selectedRequest.item.type === 'video' ? (
+                                        <video 
+                                            src={selectedRequest.item.imageUrl} 
+                                            className="w-full h-full object-cover"
+                                            muted
+                                            loop
+                                        />
+                                    ) : (
+                                        <img 
+                                            src={selectedRequest.item.imageUrl} 
+                                            alt={selectedRequest.item.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    )}
                                 </div>
-
-                                {/* Request Info */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-3">
-                                        <Calendar className="h-5 w-5 text-muted-foreground" />
-                                        <div>
-                                            <p className="font-medium">{formatDate(selectedRequest.createdAt)}</p>
-                                            <p className="text-sm text-muted-foreground">Request Time</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Action Buttons */}
-                                {selectedRequest.status === 'pending' && (
-                                    <div className="flex gap-3">
-                                        <Button 
-                                            onClick={handleApprove}
-                                            className="flex-1"
-                                        >
-                                            <Check className="h-4 w-4 mr-2" />
-                                            Approve
-                                        </Button>
-                                    </div>
-                                )}
+                                <h3 className="text-xl font-bold mb-2">{selectedRequest.item.name}</h3>
+                                {getStatusBadge(selectedRequest.status)}
                             </div>
-                        </CardContent>
-                    </Card>
-                </ModalOverlay>
-            )}
+
+                            {/* Request Info */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                                    <div>
+                                        <p className="font-medium">{formatDate(selectedRequest.createdAt)}</p>
+                                        <p className="text-sm text-muted-foreground">Request Time</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            {selectedRequest.status === 'pending' && (
+                                <div className="flex gap-3">
+                                    <Button 
+                                        onClick={handleApprove}
+                                        className="flex-1"
+                                    >
+                                        <Check className="h-4 w-4 mr-2" />
+                                        Approve
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

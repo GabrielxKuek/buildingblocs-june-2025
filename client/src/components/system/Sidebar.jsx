@@ -6,7 +6,8 @@ import PropTypes from "prop-types"
 import { Button } from "@/components/ui/button"
 import { Plus, Settings, Home, ChevronLeft, ChevronRight, PackageOpen, Warehouse, Users, MessageSquare } from "lucide-react"
 import { useState } from 'react';
-import CreateItemModal from '@/components/items/CreateItemModal';
+import CreateItemModalCaregiver from '@/components/caregiver/CreateItemModalCaregiver';
+import CreateItemModalPatient from '@/components/patient/CreateItemModalPatient';
 
 const Sidebar = ({ onCreateItem }) => {
     const location = useLocation();
@@ -50,6 +51,27 @@ const Sidebar = ({ onCreateItem }) => {
         if (onCreateItem) {
             await onCreateItem(itemData);
         }
+    };
+
+    const renderCreateModal = () => {
+        if (location.pathname.startsWith('/caregiver')) {
+            return (
+                <CreateItemModalCaregiver 
+                    show={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                    onCreateItem={handleCreateItem}
+                />
+            );
+        } else if (location.pathname.startsWith('/patient')) {
+            return (
+                <CreateItemModalPatient 
+                    show={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                    onCreateItem={handleCreateItem}
+                />
+            );
+        }
+        return null;
     };
 
     const menuItems = getMenuItems();
@@ -97,11 +119,7 @@ const Sidebar = ({ onCreateItem }) => {
                 </nav>
             </div>
 
-            <CreateItemModal 
-                show={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onCreateItem={handleCreateItem}
-            />
+            {renderCreateModal()}
         </>
     )
 }
