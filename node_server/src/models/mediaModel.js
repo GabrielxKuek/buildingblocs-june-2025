@@ -1,5 +1,6 @@
 import pool from '../services/db.js';
 
+// Function to save image in the database
 export const saveImage = async (image_url, prompt, fileName, media_type, tag_id) => {
   try {
     const query = `INSERT INTO generated_media (media_url, prompt, filename, media_type, tag_id)
@@ -15,4 +16,21 @@ export const saveImage = async (image_url, prompt, fileName, media_type, tag_id)
     throw error;
   }
 
+}
+
+// Function to save video in the database
+export const saveVideo = async (video_url, prompt, fileName, media_type, tag_id) => {
+  try {
+    const query = `INSERT INTO generated_media (media_url, prompt, filename, media_type, tag_id)
+                   VALUES ($1, $2, $3, $4, $5)
+                   RETURNING *;`;
+
+    const values = [video_url, prompt, fileName, media_type, tag_id];
+    
+    const result = await pool.query(query, values);
+    return result.rows[0];  
+  } catch (error) {
+    console.error('Error saving video:', error);
+    throw error;
+  }
 }

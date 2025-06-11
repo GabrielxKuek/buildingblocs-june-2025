@@ -5,7 +5,7 @@ const router = express.Router();
 
 // --- Generation ---
 router.post('/generateImage', mediaController.convertTextToImage, mediaController.uploadImage);
-// router.post('/generateVideo');
+router.post('/generateVideo', mediaController.convertTextToVideo, mediaController.uploadVideo);
 
 // --- Retrieval ---
 

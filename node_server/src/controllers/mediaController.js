@@ -38,16 +38,20 @@ export const convertTextToImage = async (req, res, next) => {
 }
 
 // conver text to prompts to video using runway ai
-export const convertTextToVideo = async (req, res) => {
+export const convertTextToVideo = async (req, res, next) => {
   try {
     const { prompt } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is missing!' });
     }
 
-    
+    const video_url = await aiService.textToVideo(prompt);
+    if (!video_url) {
+      return res.status(500).json({ error: 'Failed to generate video' });
+    }
 
-    res.status(501).json({ error: 'Video generation not implemented yet' });
+    res.locals.video_url = video_url;
+    next();
   } catch (error) {
     console.error('Error in mediaController:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -114,3 +118,31 @@ export const uploadImage = async (req, res) => {
   }
 }
 
+// Function to upload video in supabase
+export const uploadVideo = async (req, res) => {
+  try {
+    const { video_url } = res.locals;
+    const { prompt } = req.body;
+
+    const fileName = `video-${Date.now()}`;
+    const media_type = 'video';
+    const tag_id = 1;
+
+    const response = await model.saveVideo(video_url, prompt, fileName, media_type, tag_id);
+
+    if(response) {
+      res.status(200).json({
+        message: 'VIdeo uploaded successfully',
+        imageUrl: response.video_url,
+        prompt: response.prompt,
+        fileName: response.fileName
+      })
+    } else {
+      res.status(500).json({ error: 'Failed to save image data' });
+    }
+
+  } catch (error) {
+    console.error('Error in uploadMedia:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
