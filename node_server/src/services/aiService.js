@@ -26,7 +26,7 @@ export const textToImage = async (text) => {
     try {
         console.log('🎨 Starting Gemini image generation for:', text);
         
-        const contents = `Create a clear, simple icon-style image representing "${text}" suitable for healthcare communication. The image should be clean, minimalist, and easily recognizable.`;
+        const contents = `Create a clear, photorealistic image representing "${text}" suitable for healthcare communication. The image should be clean, minimalist, and easily recognizable.`;
 
         // Set responseModalities to include "Image" so the model can generate an image
         const response = await ai.models.generateContent({
