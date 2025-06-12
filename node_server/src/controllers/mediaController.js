@@ -12,7 +12,6 @@ const supabase = createClient(
       persistSession: false
     }
   }
-
 );
 
 // convert text prompts to image using Google GenAI
@@ -21,7 +20,7 @@ export const convertTextToImage = async (req, res, next) => {
     const { prompt } = req.body;
 
     if (!prompt) {
-      return res.status(400).json({ error: '{Prompt is missing!' });
+      return res.status(400).json({ error: 'Prompt is missing!' });
     }
 
     const response = await aiService.textToImage(prompt);
@@ -32,12 +31,12 @@ export const convertTextToImage = async (req, res, next) => {
     res.locals.imageResponse = response;
     next();
   } catch (error) {
-    console.error('Error in meidaController:', error);
+    console.error('Error in mediaController:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
-// conver text to prompts to video using runway ai
+// convert text to prompts to video using runway ai
 export const convertTextToVideo = async (req, res, next) => {
   try {
     const { prompt, imageUrl } = req.body;
@@ -69,7 +68,6 @@ export const uploadImage = async (req, res) => {
 
     for (const part of imageResponse.candidates[0].content.parts) {
       if(part.text) {
-
         console.log('Text found:', part.text);
       } 
       else if (part.inlineData) {
@@ -105,9 +103,9 @@ export const uploadImage = async (req, res) => {
     if(response) {
       res.status(200).json({
         message: 'Image uploaded successfully',
-        imageUrl: response.image_url,
+        imageUrl: response.media_url,  // Updated to use correct property name
         prompt: response.prompt,
-        fileName: response.file_name
+        fileName: response.filename     // Updated to use correct property name
       })
     } else {
       res.status(500).json({ error: 'Failed to save image data' });
@@ -133,16 +131,16 @@ export const uploadVideo = async (req, res) => {
 
     if(response) {
       res.status(200).json({
-        message: 'VIdeo uploaded successfully',
-        imageUrl: response.video_url,
+        message: 'Video uploaded successfully',
+        imageUrl: response.media_url,  // Updated to use correct property name
         prompt: response.prompt,
-        fileName: response.fileName
+        fileName: response.filename     // Updated to use correct property name
       })
     } else {
-      res.status(500).json({ error: 'Failed to save image data' });
+      res.status(500).json({ error: 'Failed to save video data' });
     }
   } catch (error) {
-    console.error('Error in uploadVideo2:', error);
+    console.error('Error in uploadVideo:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
@@ -164,7 +162,6 @@ export const fetchALlImages = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
 
 // Function to get all the videos
 export const fetchAllVideos = async (req, res) => {

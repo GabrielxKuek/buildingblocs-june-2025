@@ -37,8 +37,6 @@ const API_CONFIG = {
         ITEMS: '/items',
         STATS: '/stats',
         USERS: '/users',
-        UPLOAD_IMAGE: '/media/uploadImage',
-        UPLOAD_VIDEO: '/media/uploadVideo',
     },
     
     // Default headers
