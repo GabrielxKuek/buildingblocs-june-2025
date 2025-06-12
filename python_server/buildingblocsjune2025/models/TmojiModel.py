@@ -383,7 +383,7 @@ def convert_to_emojis(text):
         print(f"Found word: {word} -> {comprehension_dict[word]} at position {i}")
       else:
         result_array[i] = word
-        print(f"No emoji for: {word} -> keeping as '{word}' at position {i}")
+        # print(f"No emoji for: {word} -> keeping as '{word}' at position {i}")
   
   final_result = [item for item in result_array if item is not None]
   # result = " ".join(emoji_sequence)
@@ -394,10 +394,10 @@ def convert_to_emojis(text):
 test_sentences = [
   # "It's time to take your medicine",
   # "Do you need to use the bathroom?", 
-  "How are you feeling today?",
+  # "How are you feeling today?",
   # "Your daughter is coming to visit",
   # "Can you drink some water please?",
-  # "The doctor wants to see you",
+  "The doctor wants to see you",
   # "Are you having any pain?",
   # "Let's get you dressed now",
   # "Help is coming, don't worry!",
@@ -444,7 +444,7 @@ for sentence in test_sentences:
 
 
 
-
+# ===== 5th Attempt (synonymous word tracking) =====
 # --- Preprocessing ---
 # Change the synonymus words to the words in the emoji_words dictionary
 # def get_best_synonym(word, emoji_dict):
@@ -495,34 +495,7 @@ for sentence in test_sentences:
 #   print(f"Sentence: {sent}\nEmojis: {emojis}\n")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ===== 4th Attempt (Lemmatization included) =====
 # # Function to lemmatize a phrase
 # def lemmatize_phrase(phrase):
 #   return " ".join([lemmatizer.lemmatize(w) for w in phrase.split()])
@@ -557,27 +530,7 @@ for sentence in test_sentences:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ===== 5th Attempt (Phrase first approach) =====
 # def sentence_to_emoji(sentence):
 #   # Normalize the sentence
 #   sentence = sentence.lower()
