@@ -28,6 +28,7 @@ export const textToImage = async (text) => {
   return response;
 };
 
+
 // Text to Video
 export const textToVideo = async (prompt, imageUrl, onProgress = null) => {
   try {
@@ -39,6 +40,7 @@ export const textToVideo = async (prompt, imageUrl, onProgress = null) => {
       promptText: prompt,
       ratio: '1280:720',
     });
+    
 
     // Poll for completion
     let attempts = 0;

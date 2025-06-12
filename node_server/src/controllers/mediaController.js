@@ -58,6 +58,7 @@ export const convertTextToVideo = async (req, res, next) => {
   }
 }
 
+
 // Function to upload image in supabase
 export const uploadImage = async (req, res) => {
   try {

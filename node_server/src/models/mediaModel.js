@@ -49,6 +49,7 @@ export const getAllImages = async () => {
   }
 }
 
+
 // Function to get all videos
 export const getAllVideos = async () => {
   try {
