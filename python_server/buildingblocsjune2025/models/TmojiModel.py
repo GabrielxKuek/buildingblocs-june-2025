@@ -404,11 +404,11 @@ test_sentences = [
   # "What would you like to eat?"
 ]
 
-for sentence in test_sentences:
-  print(sentence)
-  result = convert_to_emojis(sentence)
-  print()
-  print(result)
+# for sentence in test_sentences:
+#   print(sentence)
+#   result = convert_to_emojis(sentence)
+#   print()
+#   print(result)
   
 
 

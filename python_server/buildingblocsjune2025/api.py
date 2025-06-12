@@ -1,92 +1,39 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
-import os
-from dotenv import load_dotenv
-
-# load env data
-load_dotenv()
+from flask import Flask, request, jsonify
+from models.TmojiModel import convert_to_emojis
 
 app = Flask(__name__)
-DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING") # secret connection string
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-app.config['SQL_ALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-api = Api(app)
-
-class UserModel(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique= True, nullable=False)
-    email = db.Column(db.String(80), unique= True, nullable=False)
-
-    def __repr__(self):
-        return f"User(name = {self.name}, email = {self.name})"
-
-user_args = reqparse.RequestParser()
-user_args.add_argument('name', type=str, required=True, help="Name cannot be blank")
-user_args.add_argument('email', type=str, required=True, help="Email cannot be blank")
-
-userFields = {
-    'id': fields.Integer,
-    'name': fields.String,
-    'email': fields.String
-}
-
-class Users(Resource):
-    @marshal_with(userFields)
-    def get(self):
-        users = UserModel.query.all()
-        print("my dickkkk")
-        print(UserModel.query.all())
-        return users
-    
-    @marshal_with(userFields)
-    def post(self):
-        args = user_args.parse_args()
-        user = UserModel(name=args["name"], email=args["email"])
-        db.session.add(user)
-        db.session.commit()
-        users = UserModel.query.all()
-
-        return users, 201
-
-class User(Resource):
-    @marshal_with(userFields)
-    def get(self, id):
-        user = UserModel.query.filter_by(id=id).first()
-        if not user:
-            abort(404, "User not found")
-        return user
-    
-    @marshal_with(userFields)
-    def put(self, id):
-        args = user_args.parse_args()
-        user = UserModel.query.filter_by(id=id).first()
-        if not user:
-            abort(404, "User not found")
-        user.name = args["name"]
-        user.email = args["email"]
-        db.session.commit()
-        return user
-    
-    @marshal_with(userFields)
-    def delete(self, id):
-        user = UserModel.query.filter_by(id=id).first()
-        if not user:
-            abort(404, "User not found")
-        db.session.delete(user)
-        db.session.commit()
-
-        users = UserModel.query.all()        
-        return user, 204
-
-api.add_resource(Users, '/api/users/')
-api.add_resource(User, '/api/users/<int:id>')
+@app.route('/api/convery-emoji', methods=['POST'])
+def convert_text_to_emoji():
+    try:
+        # Get JSON data from request body
+        data = request.get_json()
+        
+        # Validate input
+        if not data or 'text' not in data:
+            return jsonify({'error': 'Text field is required in request body'}), 400
+        
+        input_text = data['text']
+        if not input_text or not input_text.strip():
+            return jsonify({'error': 'Text cannot be empty'}), 400
+        
+        # Convert text to emojis
+        emoji_result = convert_to_emojis(input_text)
+        
+        # Return response
+        return jsonify({
+            'original_text': input_text,
+            'emoji_text': emoji_result,
+            'success': True
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
 @app.route('/')
 def home():
-    return '<h1>Flask REST API</h1>'
+    return '<h1>Text to Emoji Converter API</h1>'
+
 
 if __name__ == '__main__':
     app.run(debug=True)
