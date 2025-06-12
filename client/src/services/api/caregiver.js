@@ -208,7 +208,8 @@
 //     return `https://via.placeholder.com/400x400/6366f1/ffffff?text=${encodeURIComponent(itemName)}`;
 // };
 
-// Base API configuration
+// src/services/api/caregiver.js - UPDATED to call real backend
+
 import API_CONFIG, { 
     getApiUrl, 
     createRequestOptions, 
@@ -218,7 +219,7 @@ import API_CONFIG, {
     getTimeoutForOperation 
 } from '@/lib/apiConfig';
 
-// Dummy data for requests (until backend endpoint is created)
+// DUMMY DATA for requests (until you add request endpoints)
 const DUMMY_REQUESTS = [
     {
         id: 1,
@@ -232,105 +233,19 @@ const DUMMY_REQUESTS = [
         message: "I would like some coffee please",
         status: "pending",
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    },
-    {
-        id: 2,
-        item: {
-            id: 2,
-            name: "Water",
-            imageUrl: "https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=500",
-            type: "image"
-        },
-        patientName: "Jane Smith",
-        message: "Need water urgently",
-        status: "pending",
-        createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString()
-    },
-    {
-        id: 3,
-        item: {
-            id: 3,
-            name: "Medicine",
-            imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500",
-            type: "image"
-        },
-        patientName: "Bob Johnson",
-        message: "Time for my medication",
-        status: "approved",
-        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
     }
 ];
 
-// Get caregiver requests (using dummy data until backend endpoint exists)
-export const getCaregiverRequests = async () => {
-    // simulate api call
-    await new Promise(resolve => setTimeout(resolve, 600));
-    
-    // TODO: Replace with actual API call when backend endpoint is created
-    // const response = await fetch(`${API_BASE_URL}/requests`);
-    // return handleApiResponse(response);
-    
-    return [...DUMMY_REQUESTS];
-};
-
-// Approve a request
-export const approveRequest = async (requestId) => {
-    try {
-        // TODO: Replace with actual API call when backend endpoint is created
-        // const response = await fetch(`${API_BASE_URL}/requests/${requestId}/approve`, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' }
-        // });
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('Approved request:', requestId);
-        
-        return { 
-            success: true, 
-            message: "Request approved successfully",
-            updatedStatus: "approved"
-        };
-    } catch (error) {
-        console.error('Error approving request:', error);
-        throw error;
-    }
-};
-
-// Reject a request
-export const rejectRequest = async (requestId) => {
-    try {
-        // TODO: Replace with actual API call when backend endpoint is created
-        // const response = await fetch(`${API_BASE_URL}/requests/${requestId}/reject`, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' }
-        // });
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('Rejected request:', requestId);
-        
-        return { 
-            success: true, 
-            message: "Request rejected",
-            updatedStatus: "rejected"
-        };
-    } catch (error) {
-        console.error('Error rejecting request:', error);
-        throw error;
-    }
-};
-
-// Create caregiver item using Gemini AI image generation
+// ✅ REAL BACKEND CALL - Create caregiver item using Gemini AI
 export const createCaregiverItem = async (itemData, onProgress = null) => {
     try {
         const progressTracker = createProgressTracker(onProgress, API_CONFIG.GENERATION_TYPES.IMAGE);
         progressTracker.updateProgress('start', 5);
 
+        console.log('🎨 Calling REAL backend to generate image:', itemData.name);
+
         const response = await fetchWithTimeout(
-            getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_IMAGE),
+            getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_IMAGE), // → http://localhost:8080/api/media/generateImage
             createRequestOptions('POST', { prompt: itemData.name }),
             getTimeoutForOperation(API_CONFIG.GENERATION_TYPES.IMAGE)
         );
@@ -343,16 +258,18 @@ export const createCaregiverItem = async (itemData, onProgress = null) => {
         
         progressTracker.updateProgress('complete', 100);
         
+        console.log('✅ Backend returned image data:', data);
+        
         return {
             id: `image_${Date.now()}`,
             name: itemData.name,
-            imageUrl: data.imageUrl,
+            imageUrl: data.imageUrl, 
             type: itemData.type || "image",
             createdAt: new Date().toISOString(),
             filename: data.fileName
         };
     } catch (error) {
-        console.error('Error creating caregiver item:', error);
+        console.error('❌ Error calling backend for image:', error);
         if (error.message.includes('timeout')) {
             throw new Error('Image generation timed out. Please try again.');
         }
@@ -360,14 +277,16 @@ export const createCaregiverItem = async (itemData, onProgress = null) => {
     }
 };
 
-// Create caregiver video using Stable Diffusion
+// ✅ REAL BACKEND CALL - Create caregiver video using Stable Diffusion  
 export const createCaregiverVideo = async (itemData, onProgress = null) => {
     try {
         const progressTracker = createProgressTracker(onProgress, API_CONFIG.GENERATION_TYPES.VIDEO);
         progressTracker.updateProgress('start', 2);
 
+        console.log('🎬 Calling REAL backend to generate video:', itemData.name);
+
         const response = await fetchWithTimeout(
-            getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_VIDEO),
+            getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_VIDEO), // → http://localhost:8080/api/media/generateVideo
             createRequestOptions('POST', {
                 prompt: itemData.name,
                 imageUrl: itemData.imageUrl || null
@@ -383,16 +302,18 @@ export const createCaregiverVideo = async (itemData, onProgress = null) => {
         
         progressTracker.updateProgress('complete', 100);
         
+        console.log('✅ Backend returned video data:', data);
+        
         return {
             id: `video_${Date.now()}`,
             name: itemData.name,
-            imageUrl: data.imageUrl, // This will be the video URL
+            imageUrl: data.imageUrl, // ← REAL video URL from your backend!
             type: "video",
             createdAt: new Date().toISOString(),
             filename: data.fileName
         };
     } catch (error) {
-        console.error('Error creating caregiver video:', error);
+        console.error('❌ Error calling backend for video:', error);
         if (error.message.includes('timeout')) {
             throw new Error('Video generation timed out. This can take up to 5 minutes.');
         }
@@ -400,58 +321,15 @@ export const createCaregiverVideo = async (itemData, onProgress = null) => {
     }
 };
 
-// Update caregiver item
-export const updateCaregiverItem = async (itemId, updateData) => {
-    try {
-        // TODO: Add backend endpoint for updating items
-        // const response = await fetch(`${API_BASE_URL}/items/${itemId}`, {
-        //     method: 'PUT',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(updateData)
-        // });
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('Updated item:', itemId, updateData);
-        
-        return { 
-            success: true,
-            updatedItem: { id: itemId, ...updateData }
-        };
-    } catch (error) {
-        console.error('Error updating caregiver item:', error);
-        throw error;
-    }
-};
-
-// Delete caregiver item
-export const deleteCaregiverItem = async (itemId) => {
-    try {
-        // TODO: Add backend endpoint for deleting items
-        // const response = await fetch(`${API_BASE_URL}/items/${itemId}`, {
-        //     method: 'DELETE'
-        // });
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('Deleted item:', itemId);
-        
-        return { success: true };
-    } catch (error) {
-        console.error('Error deleting caregiver item:', error);
-        throw error;
-    }
-};
-
-// Generate new image for existing item using Gemini AI
+// ✅ REAL BACKEND CALL - Generate new image for existing item
 export const generateImageForItem = async (itemName, prompt = null, onProgress = null) => {
     try {
         const enhancedPrompt = prompt || `A clear, simple icon representing ${itemName} for healthcare communication`;
         
         const progressTracker = createProgressTracker(onProgress, API_CONFIG.GENERATION_TYPES.IMAGE);
         progressTracker.updateProgress('start', 5);
+        
+        console.log('🎨 Regenerating image via backend:', enhancedPrompt);
         
         const response = await fetchWithTimeout(
             getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_IMAGE),
@@ -464,11 +342,11 @@ export const generateImageForItem = async (itemName, prompt = null, onProgress =
         
         progressTracker.updateProgress('complete', 100);
         
-        console.log('Generated new image for:', itemName, 'with prompt:', enhancedPrompt);
+        console.log('✅ Regenerated image URL:', data.imageUrl);
         
         return data.imageUrl;
     } catch (error) {
-        console.error('Error generating image for item:', error);
+        console.error('❌ Error regenerating image:', error);
         if (error.message.includes('timeout')) {
             throw new Error('Image generation timed out. Please try again.');
         }
@@ -476,83 +354,36 @@ export const generateImageForItem = async (itemName, prompt = null, onProgress =
     }
 };
 
-// Get caregiver statistics
-export const getCaregiverStats = async () => {
-    try {
-        // TODO: Add backend endpoint for statistics
-        // const response = await fetch(`${API_BASE_URL}/stats`);
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        const stats = {
-            totalRequests: DUMMY_REQUESTS.length,
-            pendingRequests: DUMMY_REQUESTS.filter(r => r.status === 'pending').length,
-            approvedRequests: DUMMY_REQUESTS.filter(r => r.status === 'approved').length,
-            rejectedRequests: DUMMY_REQUESTS.filter(r => r.status === 'rejected').length,
-            activePatients: [...new Set(DUMMY_REQUESTS.map(r => r.patientName))].length
-        };
-        
-        return stats;
-    } catch (error) {
-        console.error('Error getting caregiver stats:', error);
-        throw error;
-    }
+// ⚠️ DUMMY DATA - Get caregiver requests (until you add request endpoints)
+export const getCaregiverRequests = async () => {
+    // simulate api call
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    console.log('⚠️ Using dummy request data - add backend endpoint later');
+    return [...DUMMY_REQUESTS];
 };
 
-// Get request history
-export const getRequestHistory = async (limit = 10) => {
-    try {
-        // TODO: Add backend endpoint for request history
-        // const response = await fetch(`${API_BASE_URL}/requests/history?limit=${limit}`);
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        const history = [...DUMMY_REQUESTS]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, limit);
-        
-        return history;
-    } catch (error) {
-        console.error('Error getting request history:', error);
-        throw error;
-    }
+// ⚠️ DUMMY DATA - Update/delete operations (until you add these endpoints)
+export const updateCaregiverItem = async (itemId, updateData) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('⚠️ Simulated update:', itemId, updateData);
+    return { success: true, updatedItem: { id: itemId, ...updateData } };
 };
 
-// Search requests
-export const searchRequests = async (searchTerm, status = null) => {
-    try {
-        // TODO: Add backend endpoint for searching requests
-        // const params = new URLSearchParams();
-        // if (searchTerm) params.append('search', searchTerm);
-        // if (status) params.append('status', status);
-        // const response = await fetch(`${API_BASE_URL}/requests/search?${params}`);
-        // return handleApiResponse(response);
-        
-        // Simulate API call for now
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        let filteredRequests = [...DUMMY_REQUESTS];
-        
-        if (status) {
-            filteredRequests = filteredRequests.filter(r => r.status === status);
-        }
-        
-        if (searchTerm) {
-            const term = searchTerm.toLowerCase();
-            filteredRequests = filteredRequests.filter(r => 
-                r.item.name.toLowerCase().includes(term) ||
-                r.patientName.toLowerCase().includes(term) ||
-                (r.message && r.message.toLowerCase().includes(term))
-            );
-        }
-        
-        return filteredRequests;
-    } catch (error) {
-        console.error('Error searching requests:', error);
-        throw error;
-    }
+export const deleteCaregiverItem = async (itemId) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('⚠️ Simulated delete:', itemId);
+    return { success: true };
+};
+
+export const approveRequest = async (requestId) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('⚠️ Simulated approve:', requestId);
+    return { success: true, message: "Request approved successfully", updatedStatus: "approved" };
+};
+
+export const rejectRequest = async (requestId) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('⚠️ Simulated reject:', requestId);
+    return { success: true, message: "Request rejected", updatedStatus: "rejected" };
 };
