@@ -1,5 +1,5 @@
 // dependencies
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 
 // components
@@ -19,60 +19,74 @@ import {
     generateImageForItem 
 } from "@/services/api/caregiver";
 
-const CaregiverPage = () => {
+const CaregiverPage = ({ setCreateItemHandler }) => {
     const location = useLocation();
     const [items, setItems] = useState([]);
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // Load data when component mounts
     useEffect(() => {
+        const loadInitialData = async () => {
+            try {
+                setLoading(true);
+                const [itemsData, requestsData] = await Promise.all([
+                    getPatientItems(),
+                    getCaregiverRequests()
+                ]);
+                setItems(itemsData);
+                setRequests(requestsData);
+            } catch (error) {
+                console.error("Error loading initial data:", error);
+                alert("Failed to load data");
+            } finally {
+                setLoading(false);
+            }
+        };
+
         loadInitialData();
     }, []);
 
-    const loadInitialData = async () => {
-        try {
-            setLoading(true);
-            const [itemsData, requestsData] = await Promise.all([
-                getPatientItems(), // Get all items from the backend
-                getCaregiverRequests()
-            ]);
-            setItems(itemsData);
-            setRequests(requestsData);
-        } catch (error) {
-            console.error('Error loading initial data:', error);
-            alert('Failed to load data');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleCreateItem = async (itemData, onProgress = null) => {
+    // Create item handler (wrapped in useCallback to preserve identity)
+    const handleCreateItem = useCallback(async (itemData, onProgress = null) => {
         try {
             let newItem;
-            
-            if (itemData.type === 'video') {
-                // Generate video with progress tracking
+
+            if (itemData.type === "video") {
                 newItem = await createCaregiverVideo(itemData, onProgress);
             } else {
-                // Generate image with progress tracking (default)
                 newItem = await createCaregiverItem(itemData, onProgress);
             }
-            
+
             setItems(prev => [...prev, newItem]);
+            return newItem;
         } catch (error) {
-            console.error('Error creating item:', error);
+            console.error("Error creating item:", error);
             throw error;
         }
-    };
+    }, []);
+
+    // Register item handler with App
+    useEffect(() => {
+        if (setCreateItemHandler) {
+            setCreateItemHandler(() => handleCreateItem);
+        }
+
+        return () => {
+            if (setCreateItemHandler) {
+                setCreateItemHandler(null);
+            }
+        };
+    }, [setCreateItemHandler, handleCreateItem]);
 
     const handleUpdateItem = async (itemId, updateData) => {
         try {
             await updateCaregiverItem(itemId, updateData);
-            setItems(prev => prev.map(item => 
-                item.id === itemId ? { ...item, ...updateData } : item
-            ));
+            setItems(prev => 
+                prev.map(item => item.id === itemId ? { ...item, ...updateData } : item)
+            );
         } catch (error) {
-            console.error('Error updating item:', error);
+            console.error("Error updating item:", error);
             throw error;
         }
     };
@@ -82,17 +96,16 @@ const CaregiverPage = () => {
             await deleteCaregiverItem(itemId);
             setItems(prev => prev.filter(item => item.id !== itemId));
         } catch (error) {
-            console.error('Error deleting item:', error);
+            console.error("Error deleting item:", error);
             throw error;
         }
     };
 
     const handleGenerateImage = async (itemName) => {
         try {
-            const newImageUrl = await generateImageForItem(itemName);
-            return newImageUrl;
+            return await generateImageForItem(itemName);
         } catch (error) {
-            console.error('Error generating image:', error);
+            console.error("Error generating image:", error);
             throw error;
         }
     };
@@ -100,13 +113,11 @@ const CaregiverPage = () => {
     const handleApproveRequest = async (requestId) => {
         try {
             await approveRequest(requestId);
-            setRequests(prev => prev.map(request => 
-                request.id === requestId 
-                    ? { ...request, status: 'approved' }
-                    : request
-            ));
+            setRequests(prev => 
+                prev.map(req => req.id === requestId ? { ...req, status: "approved" } : req)
+            );
         } catch (error) {
-            console.error('Error approving request:', error);
+            console.error("Error approving request:", error);
             throw error;
         }
     };
@@ -114,38 +125,33 @@ const CaregiverPage = () => {
     const handleRejectRequest = async (requestId) => {
         try {
             await rejectRequest(requestId);
-            setRequests(prev => prev.map(request => 
-                request.id === requestId 
-                    ? { ...request, status: 'rejected' }
-                    : request
-            ));
+            setRequests(prev => 
+                prev.map(req => req.id === requestId ? { ...req, status: "rejected" } : req)
+            );
         } catch (error) {
-            console.error('Error rejecting request:', error);
+            console.error("Error rejecting request:", error);
             throw error;
         }
     };
 
-    if (location.pathname === '/caregiver') {
+    // Navigation logic
+    if (location.pathname === "/caregiver") {
         return <Navigate to="/caregiver/manage" replace />;
     }
 
-    const isManagePage = location.pathname === '/caregiver/manage';
-    const isRequestsPage = location.pathname === '/caregiver/requests';
-
-    if (isManagePage) {
+    if (location.pathname === "/caregiver/manage") {
         return (
             <ManageItemsView
                 items={items}
                 onUpdateItem={handleUpdateItem}
                 onDeleteItem={handleDeleteItem}
                 onGenerateImage={handleGenerateImage}
-                onCreateItem={handleCreateItem}
                 loading={loading}
             />
         );
     }
 
-    if (isRequestsPage) {
+    if (location.pathname === "/caregiver/requests") {
         return (
             <RequestsView
                 requests={requests}

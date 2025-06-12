@@ -12,7 +12,7 @@ import {
     uploadPatientImage 
 } from "@/services/api/patient";
 
-const PatientPage = () => {
+const PatientPage = ({ setCreateItemHandler }) => {
     const location = useLocation();
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,6 +21,45 @@ const PatientPage = () => {
     useEffect(() => {
         loadItems();
     }, []);
+
+    // Register the create item handler with the parent App component
+    useEffect(() => {
+        const handleCreateItem = async (itemData, onProgress = null) => {
+            try {
+                let newItem;
+                
+                if (itemData.imageFile) {
+                    // Handle uploaded image
+                    newItem = await uploadPatientImage(itemData.imageFile, itemData.name);
+                } else if (itemData.type === 'video') {
+                    // Generate video from text
+                    newItem = await createPatientVideo(itemData, onProgress);
+                } else {
+                    // Generate image from text
+                    newItem = await createPatientItem(itemData, onProgress);
+                }
+                
+                setItems(prev => [...prev, newItem]);
+                console.log('Created item:', newItem);
+                return newItem;
+            } catch (error) {
+                console.error('Error creating item:', error);
+                throw error;
+            }
+        };
+
+        // Register this handler with the parent App
+        if (setCreateItemHandler) {
+            setCreateItemHandler(() => handleCreateItem);
+        }
+
+        // Cleanup: remove handler when component unmounts
+        return () => {
+            if (setCreateItemHandler) {
+                setCreateItemHandler(null);
+            }
+        };
+    }, [setCreateItemHandler, setItems]);
 
     const loadItems = async () => {
         try {
@@ -32,29 +71,6 @@ const PatientPage = () => {
             alert('Failed to load items');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleCreateItem = async (itemData) => {
-        try {
-            let newItem;
-            
-            if (itemData.imageFile) {
-                // Handle uploaded image
-                newItem = await uploadPatientImage(itemData.imageFile, itemData.name);
-            } else if (itemData.type === 'video') {
-                // Generate video from text
-                newItem = await createPatientVideo(itemData);
-            } else {
-                // Generate image from text
-                newItem = await createPatientItem(itemData);
-            }
-            
-            setItems(prev => [...prev, newItem]);
-            console.log('Created item:', newItem);
-        } catch (error) {
-            console.error('Error creating item:', error);
-            throw error;
         }
     };
 
@@ -82,7 +98,6 @@ const PatientPage = () => {
             <PatientItemsView
                 items={items}
                 onSendToCaregiver={handleSendToCaregiver}
-                onCreateItem={handleCreateItem}
                 loading={loading}
                 sendingItem={sendingItem}
             />
