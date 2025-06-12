@@ -3,7 +3,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 import re
 import spacy
-from contractions import OrderedDict
 
 
 nlp = spacy.load("en_core_web_sm")
@@ -16,9 +15,64 @@ nlp = spacy.load("en_core_web_sm")
 lemmatizer = WordNetLemmatizer()
 
 # Your emoji dictionary
-emoji_words = {
-  "water": "💧",
-  "drink": "🥤",
+comprehension_dict = {
+  # Medical/Care instructions
+  "medicine": "💊", "pill": "💊", "medication": "💊", "take": "👋",
+  "doctor": "👨‍⚕️", "nurse": "👩‍⚕️", "appointment": "📅", "hospital": "🏥",
+  "therapy": "🧠", "exercise": "🏃", "physical": "🏃", "speech": "🗣️",
+  "blood": "🩸", "pressure": "🩸", "temperature": "🌡️", "heart": "❤️",
+  "xray": "📷", "scan": "📷", "test": "🔬", "results": "📄",
+  
+  # Daily care instructions
+  "eat": "🍽️", "drink": "🥤", "water": "💧", "food": "🍽️", "meal": "🍽️",
+  "breakfast": "🌅🍽️", "lunch": "☀️🍽️", "dinner": "🌆🍽️",
+  "shower": "🚿", "bath": "🛁", "wash": "🧼", "brush": "🦷", "teeth": "🦷",
+  "sleep": "😴", "nap": "😴", "rest": "😴", "bed": "🛏️",
+  "bathroom": "🚽", "toilet": "🚽", "diaper": "👶", "change": "🔄",
+  "clothes": "👕", "dress": "👗", "shirt": "👕", "pants": "👖", "shoes": "👟",
+  
+  # Questions others ask
+  "how": "❓", "what": "❓", "where": "❓", "when": "❓", "who": "❓",
+  "feel": "😊", "feeling": "😊", "pain": "😣", "hurt": "😣", "okay": "👍",
+  "need": "🤲", "want": "🤲", "like": "👍", "comfortable": "😌",
+  "hungry": "🍽️", "thirsty": "😰", "tired": "😴", "cold": "❄️", "hot": "🔥",
+  
+  # Time references others use
+  "now": "⏰", "today": "📅", "tomorrow": "📅", "morning": "🌅", 
+  "afternoon": "☀️", "evening": "🌇", "night": "🌙", "later": "⏰",
+  "minute": "⏰", "hour": "⏰", "soon": "⏰", "wait": "⏰",
+  
+  # Family/visitor communication
+  "family": "👪", "visit": "👋", "visitor": "👥", "call": "📞", "phone": "📱",
+  "mom": "👩", "dad": "👨", "mother": "👩", "father": "👨", "wife": "👩", "husband": "👨",
+  "son": "👦", "daughter": "👧", "child": "👶", "grandchild": "👶",
+  "friend": "👫", "neighbor": "🏠👥",
+  
+  # Location/movement instructions
+  "go": "➡️", "come": "⬅️", "stay": "⏹️", "sit": "🪑", "stand": "🧍", "walk": "🚶",
+  "room": "🏠", "kitchen": "🍳", "bedroom": "🛏️", "living": "🛋️",
+  "outside": "🌳", "inside": "🏠", "here": "📍", "there": "📍",
+  "home": "🏠", "car": "🚗", "wheelchair": "♿",
+  
+  # Safety/emergency
+  "help": "🆘", "emergency": "🚨", "911": "🚨", "fire": "🔥",
+  "safe": "✅", "danger": "⚠️", "careful": "⚠️", "stop": "✋",
+  
+  # Comfort/reassurance
+  "love": "❤️", "care": "❤️", "worry": "😟", "scared": "😨", "afraid": "😨",
+  "better": "📈", "worse": "📉", "same": "➡️", "improve": "📈",
+  "fine": "👍", "good": "👍", "bad": "👎", "sorry": "😔",
+  
+  # Instructions/requests
+  "please": "🙏", "can": "❓", "could": "❓", "would": "❓", "will": "⏩",
+  "open": "📂", "close": "📁", "turn": "🔄", "press": "👆", "push": "👆",
+  "give": "🤲", "bring": "➡️", "show": "👀", "look": "👀", "listen": "👂",
+  
+  # Yes/No and responses
+  "yes": "✅", "no": "❌", "maybe": "🤷", "ok": "👍",
+  "sure": "✅", "alright": "👍", "cannot": "❌", "not": "❌",
+  
+  # From emoji_words
   "coffee": "☕",
   "tea": "🍵",
   "juice": "🧃",
@@ -28,9 +82,6 @@ emoji_words = {
   "soda": "🥤",
   "cup": "☕",
   "glass": "🥛",
-  "thirsty": "😰",
-  "cold": "❄️",
-  "hot": "🔥",
   "bottle": "🍾",
   "refresh": "💦",
   "watermelon": "🍉",
@@ -39,150 +90,326 @@ emoji_words = {
   "bar": "🍸",
   "party": "🎉",
   "break": "⏸️",
-  "morning": "🌅",
-  "evening": "🌇",
   "happy": "😄",
   "?": "❓",
   "!": "❗",
   "let's": "🤝",
-  
+  "you": "🫵",
+  "your": "🫵"
 }
 
-emoji_phrases = {
-  "cold drink": "❄️🥤",
-  "hot coffee": "🔥☕",
-  "glass of milk": "🥛",
-  "drink water": "💧",
-  "bottle of wine": "🍾🍷",
-  "let's have": "🤝🍽️",
-  "i am": "🙂",
-  "i'm": "🙂",
-  "i want": "🙏",
-  "i don't want": "🙅",
-  "cold drink": "❄️🥤",
-  "with friends": "👫",
+phrase_dict = {
+  # Question patterns (lemmatized forms)
+  "how be you": "❓🫵",
+  "what be": "❓",
+  "where be": "❓📍",
+  "when be": "❓⏰",
+  "who be": "❓👤",
+  "why be": "❓",
   
-  "do": "❓",  
-  "be": "❓",  # Covers: is/are/was/were/be/being
-  "can": "❓🛠️",
-  "will": "❓⏭️",
-  "would": "❓🤔",
-  "have": "❓✔️",  # Covers have/has/had
-  "should": "❓💡",
+  # Negation patterns (lemmatized)
+  "do not": "❌",
+  "be not": "❌",
+  "will not": "❌⏩",
+  "can not": "❌",
   
-  # WH-questions
-  "what": "❓🔍",
-  "where": "❓🗺️",
-  "when": "❓📅",
-  "who": "❓👤",
-  "why": "❓🤔",
-  "how": "❓🛠️",
-  "which": "❓🔎",
-  "whose": "❓👤",
+  # Modal patterns (lemmatized)
+  "need to": "🙏",
+  "want to": "🙏",
+  "have to": "📋", 
+  "go to": "➡️",
   
-  # Common combinations (will be built from lemmas)
-  "how many": "❓🔢",
-  "how much": "❓💰",
-  "what time": "❓🕒",
-  "what kind": "❓🔎",
+  "take medicine": "🗣️💊",
+  "feel pain": "😣💢", 
+  "call doctor": "📞👨‍⚕️",
+  "go hospital": "➡️🏥",
   
-  # Negation (works with any question)
-  "not": "🚫",
-  "don't": "🚫",
-  "doesn't": "🚫",
-  "didn't": "🚫⌛",
-  "can't": "🚫🛠️",
-  "won't": "🚫⏭️"
+  "use bathroom": "🚽🧻",
+  "drink water": "💧🥤",
+  "eat food": "🍽️", 
+  "get dress": "👕👖",
+  "take shower": "🚿🧼",
+  "brush tooth": "🪥🦷",
+  
+  "love you": "❤️🫵",
+  "miss you": "😢💭🫵",
+  "see you": "👀👋", 
+  "call family": "📞👪",
+  "visit today": "👋📅🏠",
+
+  "right now": "⏰❗",
+  "later today": "⏰➡️📅",
+  "every day": "📅🔄",
+  "once a": "1️⃣📅",
+  "twice a": "2️⃣📅",
+
+  "call 911": "📞🚨👮",
+  "need help": "🙏🆘", 
+  "feel sick": "🤒🤢",
+  "cannot breathe": "❌🫁😫",
+  "hurt bad": "😣💢❗",
+
+  "feel good": "😊👍",
+  "feel bad": "😢👎",
+  "be okay": "👍✅",
+  "be safe": "✅🛡️",
+  "feel better": "😊📈❤️",
+  "do not": "❌",
+  "can not": "❌",
+  "do you": "❓🫵",
+  "are you": "❓🫵",
+  "can you": "❓🫵",
+  "will you": "❓🫵",
 }
 
+contractions_dict = {
+  # Specific irregular cases FIRST
+  "won't": "will not",
+  "can't": "cannot",
+  "shan't": "shall not",
+  "ain't": "am not",
+  "ma'am": "madam",
+  "o'clock": "of the clock",
+  "y'all": "you all",
+  
+  # Informal contractions
+  "gonna": "going to",
+  "wanna": "want to", 
+  "gotta": "got to",
+  "hafta": "have to",
+  "kinda": "kind of",
+  "sorta": "sort of",
+  "lotta": "lot of",
+  "outta": "out of",
+  "coulda": "could have",
+  "shoulda": "should have",
+  "woulda": "would have",
+  "mighta": "might have",
+  "musta": "must have",
+  
+  # Negative contractions (specific verbs first)
+  "haven't": "have not",
+  "hasn't": "has not",
+  "hadn't": "had not",
+  "wasn't": "was not",
+  "weren't": "were not",
+  "isn't": "is not",
+  "aren't": "are not",
+  "doesn't": "does not",
+  "didn't": "did not",
+  "don't": "do not",
+  "wouldn't": "would not",
+  "shouldn't": "should not",
+  "couldn't": "could not",
+  "mightn't": "might not",
+  "mustn't": "must not",
+  "needn't": "need not",
+  "daren't": "dare not",
+  "usedn't": "used not",
+  
+  # Perfect tense contractions
+  "should've": "should have",
+  "could've": "could have", 
+  "would've": "would have",
+  "might've": "might have",
+  "must've": "must have",
+  "ought've": "ought have",
+  
+  # Specific pronoun + verb contractions
+  "that's": "that is",
+  "there's": "there is",
+  "here's": "here is",
+  "what's": "what is",
+  "where's": "where is",
+  "when's": "when is",
+  "how's": "how is",
+  "who's": "who is",
+  "why's": "why is",
+  "it's": "it is",
+  "he's": "he is",
+  "she's": "she is",
+  "we're": "we are",
+  "they're": "they are",
+  "you're": "you are",
+  "let's": "let us",
+  
+  # Perfect tense (have)
+  "you've": "you have",
+  "we've": "we have", 
+  "they've": "they have",
+  "i've": "i have",
+  
+  # Future tense (will)
+  "you'll": "you will",
+  "we'll": "we will",
+  "they'll": "they will", 
+  "i'll": "i will",
+  "he'll": "he will",
+  "she'll": "she will",
+  "it'll": "it will",
+  "that'll": "that will",
+  "there'll": "there will",
+  
+  # Conditional (would)
+  "you'd": "you would",
+  "we'd": "we would",
+  "they'd": "they would",
+  "i'd": "i would", 
+  "he'd": "he would",
+  "she'd": "she would",
+  "it'd": "it would",
+  "that'd": "that would",
+  "there'd": "there would",
+  
+  # First person singular
+  "i'm": "i am",
+  
+  # General patterns LAST (to avoid conflicts)
+  "n't": " not",
+  "'re": " are", 
+  "'ve": " have",
+  "'ll": " will",
+  "'d": " would",
+  "'m": " am",
+  "'s": " is",
+}
 
-class TextToEmojiConverter: 
-  def __init__(self, emoji_words):
-    self.np = spacy.load("en_core_web_sm")
-    self.emoji_words = emoji_words
-    self.sorted_phrases = sorted(emoji_words.keys(), key=len, reverse=True)  # Sort by length for phrase matching
+# --- Helper Functions ---
+# Function to convert contractions into non contraction text
+def fix_contractions(text):  
+  for contraction, expansion in contractions_dict.items():
+    text = text.replace(contraction, expansion)
+    
+  return text
 
-  def get_best_synonym(self, word, pos_tag=None):
-    """Find best synonym with POS tag consideration"""
-    if word in self.emoji_words:
-      return word
+
+# Function to get the best synonym for a word based on the comprehension dictionary
+def get_best_synonym(word, pos_tag=None):
+  if word in comprehension_dict:
+    return word
+  
+  important_words = ['need', 'do', 'be', 'have', 'go', 'get', 'want']
+  if word in important_words:
+    return word
+  
+  synonyms = wordnet.synsets(word, pos=pos_tag)
+  for syn in synonyms:
+    for lemma in syn.lemma_names():
+      lemma_clean = lemma.replace('_', ' ').lower()
+      if lemma_clean in comprehension_dict:
+        return lemma_clean
+  
+  return word # fallback to original if no match
+
+# Function to preprocess text
+def preprocess_text(argText):
+  # Lower and fix contractions
+  text = argText.lower() 
+  text = fix_contractions(text)
+  # print(f"After contractions: {text}")        # TO REMOVE
+  
+  # Clean and Lemmatize
+  text = re.sub(r'[^\w\s\?\!]', '', text)  # remove punctuation
+  doc = nlp(text)
+  
+  lemmatized_words = []
+  pos_tags = []
+  
+  for token in doc:
+    if not token.is_punct and token.is_alpha:
+      lemmatized_words.append(token.lemma_.lower())
+      pos_tags.append(token.pos_)
+    elif token.text in ['?', '!']:
+      lemmatized_words.append(token.text)
+      pos_tags.append('PUNCT')
+
+  # Synonym replacement
+  replaced_words = []
+  for i, word in enumerate(lemmatized_words):
+    if word in ['?', '!']:
+      replaced_words.append(word)
+    else:
+      pos_map = {'NOUN': wordnet.NOUN, 'VERB': wordnet.VERB, 
+                'ADJ': wordnet.ADJ, 'ADV': wordnet.ADV}
+      wordnet_pos = pos_map.get(pos_tags[i], None)
+      synonym = get_best_synonym(word, wordnet_pos)
+      replaced_words.append(synonym)
+    
+  processed_text = " ".join(replaced_words)
+  # print(f"After processing: {processed_text}")
+  
+  return {
+    "processed_text": processed_text,
+    "replaced_words": replaced_words
+  }
+  
+
+# --- Main Function ---
+def convert_to_emojis(text):
+  #  Preprocess the text
+  processed_data = preprocess_text(text)
+  processed_text = processed_data["processed_text"]
+  words_list = processed_text.split()    
+  
+  result_array = words_list.copy()  # Same length as original
+  used_positions = set()
+ 
+  # phrase first (need find their position and mark them so, it wont get lost)
+  for phrase in sorted(phrase_dict.keys(), key=len, reverse=True):
+    phrase_words = phrase.split()
+    
+    # Find where this phrase starts in the words_list
+    for i in range(len(words_list) - len(phrase_words) + 1):
+      if words_list[i:i+len(phrase_words)] == phrase_words:
+        print(f"Found phrase: {phrase} -> {phrase_dict[phrase]} at position {i}")
+        # Replace the first word with the phrase emoji
+        result_array[i] = phrase_dict[phrase]
         
-    synonyms = wordnet.synsets(word, pos=pos_tag)
-    best_matches = []
-    
-    for syn in synonyms:
-      for lemma in syn.lemma_names():
-        lemma_clean = lemma.replace('_', ' ')
-        if lemma_clean in self.emoji_words:
-          # Prioritize by similarity score if available
-          best_matches.append((lemma_clean, syn.definition()))
-    
-    return best_matches[0][0] if best_matches else word
-
-  def preprocess_text(self, text):
-    """Clean and preprocess text"""
-    text = contractions.fix(text.lower())
-    # Remove extra whitespace and special chars that might interfere
-    text = ' '.join(text.split())
-    return text
-
-  def convert_to_emoji(self, sentence):
-    """Convert sentence to emojis with improved logic"""
-    sentence = self.preprocess_text(sentence)
-    doc = self.nlp(sentence)
-    
-    # Create a mapping of original positions to preserve context
-    processed_tokens = []
-    for token in doc:
-      if not token.is_stop and not token.is_punct:
-        # Map spaCy POS to WordNet POS
-        pos_map = {'NOUN': wordnet.NOUN, 'VERB': wordnet.VERB, 
-                  'ADJ': wordnet.ADJ, 'ADV': wordnet.ADV}
-        wordnet_pos = pos_map.get(token.pos_, None)
-        
-        synonym = self.get_best_synonym(token.lemma_, wordnet_pos)
-        processed_tokens.append(synonym)
-      else:
-        processed_tokens.append(token.lemma_)
-    
-    # Reconstruct with better phrase matching
-    processed_text = ' '.join(processed_tokens)
-    matched_emojis = []
-    used_positions = set()
-    
-    # Multi-pass phrase matching to avoid conflicts
-    for phrase in self.sorted_phrases:
-      start = 0
-      while True:
-        pos = processed_text.find(phrase, start)
-        if pos == -1:
-          break
+        # Mark all positions in this phrase as used
+        for j in range(i, i + len(phrase_words)):
+          used_positions.add(j)
+          
+        # Remove the other words in the phrase (set to None)
+        for j in range(i + 1, i + len(phrase_words)):
+          result_array[j] = None
+        break
             
-        # Check if this position overlaps with already used positions
-        phrase_positions = set(range(pos, pos + len(phrase)))
-        if not phrase_positions.intersection(used_positions):
-          matched_emojis.append((pos, self.emoji_words[phrase]))
-          used_positions.update(phrase_positions)
-        
-        start = pos + 1
-    
-    # Sort by position and return emojis
-    matched_emojis.sort(key=lambda x: x[0])
-    return ' '.join([emoji for _, emoji in matched_emojis])
-
-converter = TextToEmojiConverter(emoji_words)
-result = converter.convert_to_emoji("I love happy dogs")
-print(result)
-
-
+  
+  # Individual words (fill remaining positions with individual word emojis)
+  for i, word in enumerate(words_list):
+    if i not in used_positions:  # Position not used by a phrase
+      if word in comprehension_dict:
+        result_array[i] = comprehension_dict[word]
+        print(f"Found word: {word} -> {comprehension_dict[word]} at position {i}")
+      else:
+        result_array[i] = word
+        print(f"No emoji for: {word} -> keeping as '{word}' at position {i}")
+  
+  final_result = [item for item in result_array if item is not None]
+  # result = " ".join(emoji_sequence)
+  # print(f'Final result: {result}')
+  return " ".join(final_result)
 
 
+test_sentences = [
+  # "It's time to take your medicine",
+  # "Do you need to use the bathroom?", 
+  "How are you feeling today?",
+  # "Your daughter is coming to visit",
+  # "Can you drink some water please?",
+  # "The doctor wants to see you",
+  # "Are you having any pain?",
+  # "Let's get you dressed now",
+  # "Help is coming, don't worry!",
+  # "What would you like to eat?"
+]
 
-
-
-
-
-
+for sentence in test_sentences:
+  print(sentence)
+  result = convert_to_emojis(sentence)
+  print()
+  print(result)
+  
 
 
 
