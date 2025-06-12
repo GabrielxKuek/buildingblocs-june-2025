@@ -8,13 +8,13 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 # Ensure that the necessary NLTK resources are downloaded
-# nltk.download('wordnet')
-# nltk.download('omw-1.4')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 
 # Initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
 
-# Your emoji dictionary
+# Emoji dictionary
 comprehension_dict = {
   # Medical/Care instructions
   "medicine": "💊", "pill": "💊", "medication": "💊", "take": "👋",
@@ -391,18 +391,18 @@ def convert_to_emojis(text):
   return " ".join(final_result)
 
 
-test_sentences = [
-  # "It's time to take your medicine",
-  # "Do you need to use the bathroom?", 
-  # "How are you feeling today?",
-  # "Your daughter is coming to visit",
-  # "Can you drink some water please?",
-  "The doctor wants to see you",
-  # "Are you having any pain?",
-  # "Let's get you dressed now",
-  # "Help is coming, don't worry!",
-  # "What would you like to eat?"
-]
+# test_sentences = [
+#   "It's time to take your medicine",
+#   "Do you need to use the bathroom?", 
+#   "How are you feeling today?",
+#   "Your daughter is coming to visit",
+#   "Can you drink some water please?",
+#   "The doctor wants to see you",
+#   "Are you having any pain?",
+#   "Let's get you dressed now",
+#   "Help is coming, don't worry!",
+#   "What would you like to eat?"
+# ]
 
 # for sentence in test_sentences:
 #   print(sentence)

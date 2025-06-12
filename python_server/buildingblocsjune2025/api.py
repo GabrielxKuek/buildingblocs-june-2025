@@ -3,7 +3,7 @@ from models.TmojiModel import convert_to_emojis
 
 app = Flask(__name__)
 
-@app.route('/api/convery-emoji', methods=['POST'])
+@app.route('/api/convert-emoji', methods=['POST'])
 def convert_text_to_emoji():
     try:
         # Get JSON data from request body

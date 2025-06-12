@@ -55,7 +55,7 @@ export const convertTextToVideo = async (req, res, next) => {
     res.locals.video_url = response;
     next();
   } catch (error) {
-    console.error('Error in mediaController:', error);
+    console.error('Error in convertTextToVideo Controller:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
