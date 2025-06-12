@@ -32,6 +32,7 @@ export const textToImage = async (text) => {
 export const textToVideo = async (prompt, imageUrl, onProgress = null) => {
   try {
     onProgress?.('🎬 Starting Runway AI video generation...');
+    console.log("image URL" + imageUrl)
 
     let task = await client.imageToVideo.create({
       model: 'gen4_turbo',
@@ -81,7 +82,7 @@ export const textToVideo = async (prompt, imageUrl, onProgress = null) => {
       return videoUrl;
     }
   } catch (error) {
-    console.error("Error in textToVideo2:", error);
+    console.error("Error in textToVideo:", error);
     throw new Error("Failed to generate video");
   }
 }

@@ -37,7 +37,7 @@ export const saveVideo = async (video_url, prompt, fileName, media_type, tag_id)
 
 export const getAllImages = async () => {
   try {
-    const query = `SELECT media_url, media_name FROM generated_media 
+    const query = `SELECT media_id, media_url, media_name FROM generated_media 
                   WHERE media_type = 'image' 
                   ORDER BY created_at DESC;`;
 
@@ -53,7 +53,7 @@ export const getAllImages = async () => {
 // Function to get all videos
 export const getAllVideos = async () => {
   try {
-    const query = `SELECT media_url, media_name FROM generated_media 
+    const query = `SELECT media_id, media_url, media_name FROM generated_media 
                   WHERE media_type = 'video' 
                   ORDER BY created_at DESC;`;
 
@@ -62,6 +62,24 @@ export const getAllVideos = async () => {
   }
   catch (error) {
     console.error('Error fetching all videos:', error);
+    throw error;
+  }
+}
+
+export const getMediaUrlById = async (id) => {
+  try {
+    const query = `SELECT media_url FROM generated_media WHERE media_id = $1;`;
+    const values = [id];
+    
+    const result  = await pool.query(query, values);
+    if (result.rows.length > 0) {
+      return result.rows[0].media_url;
+    } else {
+      throw new Error('Media not found');
+    }
+  }
+  catch (error) {
+    console.error('Error fetching media URL by ID:', error);
     throw error;
   }
 }

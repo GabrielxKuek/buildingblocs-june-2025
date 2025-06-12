@@ -39,8 +39,10 @@ export const convertTextToImage = async (req, res, next) => {
 // convert text to prompts to video using runway ai
 export const convertTextToVideo = async (req, res, next) => {
   try {
-    const { prompt, imageUrl } = req.body;
+    const { prompt } = req.body;
+    const imageUrl = res.locals.imageUrl;
     if (!prompt) {
+      console.log('IMAGE URL NOT FOUND!!!!!');
       return res.status(400).json({ error: 'Prompt is missing!' });
     }
 
@@ -48,8 +50,9 @@ export const convertTextToVideo = async (req, res, next) => {
     if (!response) {
       return res.status(500).json({ error: 'Failed to generate video' });
     }
+    console.log('Video URL:', response);
 
-    res.locals.video_url = response.videoUrl;
+    res.locals.video_url = response;
     next();
   } catch (error) {
     console.error('Error in mediaController:', error);
@@ -177,6 +180,26 @@ export const fetchAllVideos = async (req, res) => {
     }
   } catch (error) {
     console.error('Error in fetchVideos:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export const fetchMediaUrlById = async (req, res, next) => {
+  try {
+    const { imageId } = req.body;
+    if (!imageId) {
+      return res.status(400).json({ error: 'Media ID is required' });
+    }
+
+    const imageUrl = await model.getMediaUrlById(imageId);
+    if (imageUrl) {
+      res.locals.imageUrl = imageUrl
+      next();
+    } else {
+      res.status(404).json({ message: 'Media not found' });
+    }
+  } catch (error) {
+    console.error('Error in fetchMediaUrlById:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }

@@ -54,6 +54,7 @@ const CaregiverPage = ({ setCreateItemHandler }) => {
 
             if (itemData.type === "video") {
                 newItem = await createCaregiverVideo(itemData, onProgress);
+                console.log('Item Data:', itemData);
             } else {
                 newItem = await createCaregiverItem(itemData, onProgress);
             }

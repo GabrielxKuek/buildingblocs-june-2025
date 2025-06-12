@@ -49,7 +49,7 @@ const CreateItemModalCaregiver = ({
             // Use the updated API config
             const images = await fetchAllImages();
             setAvailableImages(images);
-            
+
         } catch (error) {
             console.error('Error fetching images:', error);
             setError('Failed to load available images. Please try again.');
@@ -58,6 +58,14 @@ const CreateItemModalCaregiver = ({
             setLoadingImages(false);
         }
     };
+
+    const getSelectedImage = () => {
+        return availableImages.find((img, index) => {
+          const uniqueId = img.media_id || `image-${index}`;
+          return uniqueId === formData.selectedImageId;
+        });
+      };
+      
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
@@ -76,16 +84,15 @@ const CreateItemModalCaregiver = ({
     };
 
     const handleImageSelect = (imageId) => {
+        console.log('Selecting image with ID:', imageId); // Debug log
         setFormData(prev => ({
             ...prev,
-            selectedImageId: imageId
+            selectedImageId: imageId === prev.selectedImageId ? null : imageId // Toggle selection
         }));
         setError('');
     };
-
-    const getSelectedImage = () => {
-        return availableImages.find(img => img.media_id === formData.selectedImageId);
-    };
+      
+      
 
     // Progress callback for AI generation
     const handleProgress = (progressData) => {
@@ -97,6 +104,14 @@ const CreateItemModalCaregiver = ({
     };
 
     const handleSubmit = async (e) => {
+
+        const getSelectedImage = () => {
+            return availableImages.find((img, index) => {
+              const uniqueId = img.media_id || `image-${index}`;
+              return uniqueId === formData.selectedImageId;
+            });
+          };
+          
         e.preventDefault();
         
         if (!formData.name.trim()) {
@@ -121,13 +136,19 @@ const CreateItemModalCaregiver = ({
         
         // Close the modal to allow non-blocking progress
         onClose();
+
         
         try {
             const selectedImage = getSelectedImage();
+
+            console.log("Selected image before video generation:", selectedImage);
+
+            console.log("🧩 selectedImage object:", selectedImage); // ADD THIS LINE
+            
             const itemData = {
                 name: formData.name,
                 type: formData.type,
-                id: Date.now(),
+                id: selectedImage?.media_id,
                 imageUrl: formData.type === 'video' ? selectedImage?.media_url : null
             };
 
@@ -280,43 +301,70 @@ const CreateItemModalCaregiver = ({
                                         </Alert>
                                     ) : (
                                         <div className="grid grid-cols-3 gap-3 max-h-60 overflow-y-auto border rounded-lg p-3">
-                                            {availableImages.map((image) => (
-                                                <div
-                                                    key={image.media_id}
-                                                    className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
-                                                        formData.selectedImageId === image.media_id
-                                                            ? 'border-primary shadow-lg scale-105'
-                                                            : 'border-muted hover:border-muted-foreground'
-                                                    }`}
-                                                    onClick={() => handleImageSelect(image.media_id)}
-                                                >
-                                                    <div className="aspect-square">
-                                                        <img
-                                                            src={image.media_url}
-                                                            alt={image.media_name || 'Generated image'}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                    
-                                                    {formData.selectedImageId === image.media_id && (
-                                                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                                                            <div className="bg-primary rounded-full p-1">
-                                                                <Check className="h-4 w-4 text-primary-foreground" />
+                                            {availableImages.map((image, index) => {
+                                                // Use a combination of media_id and index for uniqueness
+                                                const uniqueId = image.media_id || `image-${index}`;
+                                                const isSelected = formData.selectedImageId === uniqueId;
+                                                
+                                                return (
+                                                    <div
+                                                        key={uniqueId}
+                                                        className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                                                            isSelected
+                                                                ? 'border-primary shadow-lg scale-105 ring-2 ring-primary/50'
+                                                                : 'border-muted hover:border-muted-foreground hover:scale-102'
+                                                        }`}
+                                                        onClick={() => handleImageSelect(uniqueId)}
+                                                    >
+                                                        <div className="aspect-square">
+                                                            <img
+                                                                src={image.media_url}
+                                                                alt={image.media_name || 'Generated image'}
+                                                                className="w-full h-full object-cover"
+                                                                onError={(e) => {
+                                                                    console.error('Image failed to load:', image.media_url);
+                                                                    e.target.style.display = 'none';
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        
+                                                        {/* Selection overlay with better visibility */}
+                                                        {isSelected && (
+                                                            <div className="absolute inset-0 bg-primary/30 flex items-center justify-center backdrop-blur-sm">
+                                                                <div className="bg-primary rounded-full p-2 shadow-lg">
+                                                                    <Check className="h-5 w-5 text-primary-foreground" />
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        {/* Image info overlay */}
+                                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white text-xs p-2">
+                                                            <div className="truncate font-medium">
+                                                                {image.media_name || image.prompt || 'Untitled'}
+                                                            </div>
+                                                            <div className="text-xs opacity-75">
+                                                                ID: {uniqueId}
                                                             </div>
                                                         </div>
-                                                    )}
-                                                    
-                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
-                                                        {image.media_name || image.prompt || 'Untitled'}
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                     
                                     {formData.selectedImageId && (
-                                        <div className="text-sm text-muted-foreground">
-                                            Selected: {getSelectedImage()?.media_name || getSelectedImage()?.prompt || 'Image'}
+                                        <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
+                                            <div className="font-medium text-foreground mb-1">Selected Image:</div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded overflow-hidden border">
+                                                    <img 
+                                                        src={getSelectedImage()?.media_url} 
+                                                        alt="Selected" 
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                                <span>{getSelectedImage()?.media_name || getSelectedImage()?.prompt || 'Image'}</span>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

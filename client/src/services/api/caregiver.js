@@ -16,7 +16,7 @@ const DUMMY_REQUESTS = [
         item: {
             id: 1,
             name: "Coffee",
-            imageUrl: "https://www.fairprice.com.sg/wp-content/uploads/2019/10/pour-over-coffee-970x526.jpg",
+            media_url: "https://www.fairprice.com.sg/wp-content/uploads/2019/10/pour-over-coffee-970x526.jpg",
             type: "image"
         },
         patientName: "John Doe",
@@ -62,7 +62,7 @@ export const createCaregiverImage = async (itemData, onProgress = null) => {
         return {
             id: `image_${Date.now()}`,
             name: itemData.name,
-            imageUrl: data.imageUrl, 
+            media_url: data.media_url, 
             type: "image",
             createdAt: new Date().toISOString(),
             filename: data.fileName
@@ -83,12 +83,13 @@ export const createCaregiverVideo = async (itemData, onProgress = null) => {
         progressTracker.updateProgress('start', 2);
 
         console.log('🎬 Calling REAL backend to generate video:', itemData.name);
-        console.log('🖼️ Using base image:', itemData.imageUrl);
+        console.log('🖼️ Using base image:', itemData.imageId);
 
         // Debug: Log the exact request being sent
         const requestBody = {
             prompt: itemData.name,
-            imageUrl: itemData.imageUrl || null
+            imageUrl: itemData.imageUrl || null,
+            imageId: itemData.id
         };
         console.log('📤 Video generation request body:', requestBody);
 
@@ -111,7 +112,7 @@ export const createCaregiverVideo = async (itemData, onProgress = null) => {
         return {
             id: `video_${Date.now()}`,
             name: itemData.name,
-            imageUrl: data.imageUrl, // ← Video URL from backend
+            media_url: data.media_url, // ← Video URL from backend
             type: "video",
             createdAt: new Date().toISOString(),
             filename: data.fileName
@@ -123,7 +124,7 @@ export const createCaregiverVideo = async (itemData, onProgress = null) => {
         console.error('Video generation error details:', {
             message: error.message,
             itemName: itemData.name,
-            imageUrl: itemData.imageUrl,
+            media_url: itemData.media_url,
             timestamp: new Date().toISOString()
         });
         
@@ -153,9 +154,9 @@ export const generateImageForItem = async (itemName, onProgress = null) => {
         
         progressTracker.updateProgress('complete', 100);
         
-        console.log('✅ Regenerated image URL:', data.imageUrl);
+        console.log('✅ Regenerated image URL:', data.media_url);
         
-        return data.imageUrl;
+        return data.media_url;
     } catch (error) {
         console.error('❌ Error regenerating image:', error);
         if (error.message.includes('timeout') || error.message.includes('timed out')) {
@@ -240,16 +241,16 @@ export const rejectRequest = async (requestId) => {
 };
 
 // 🔧 DEBUG HELPER - Test video generation endpoint
-export const debugVideoGeneration = async (itemName, imageUrl = null) => {
+export const debugVideoGeneration = async (itemName, media_url = null) => {
     try {
         console.log('🔍 DEBUG: Testing video generation endpoint...');
         console.log('🔍 Item name:', itemName);
-        console.log('🔍 Image URL:', imageUrl);
+        console.log('🔍 Image URL:', media_url);
         console.log('🔍 Full URL:', getApiUrl(API_CONFIG.ENDPOINTS.GENERATE_VIDEO));
         
         const requestBody = {
             prompt: itemName,
-            imageUrl: imageUrl
+            media_url: media_url
         };
         
         console.log('🔍 Request body:', JSON.stringify(requestBody, null, 2));

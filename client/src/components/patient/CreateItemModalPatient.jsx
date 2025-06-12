@@ -81,7 +81,7 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
         try {
             const itemData = {
                 name: formData.name,
-                id: Date.now(),
+                id: formData.id,
                 imageFile: formData.imageFile
             };
 
