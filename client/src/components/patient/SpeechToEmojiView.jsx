@@ -287,19 +287,6 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
         });
     };
 
-    const sendToCaregiver = () => {
-        if (onSendToCaregiver && emojiResult) {
-            const messageData = {
-                id: `emoji_${Date.now()}`,
-                name: "Emoji Message",
-                originalText: transcript,
-                emojiText: emojiResult,
-                type: "emoji",
-                timestamp: new Date().toISOString()
-            };
-            onSendToCaregiver(messageData);
-        }
-    };
 
     return (
         <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
@@ -453,14 +440,6 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
                                 <p className="text-2xl leading-relaxed">{emojiResult}</p>
                             </div>
                             <div className="flex gap-2">
-                                <Button
-                                    onClick={sendToCaregiver}
-                                    className="flex-1"
-                                    disabled={!onSendToCaregiver}
-                                >
-                                    <Send className="h-4 w-4 mr-2" />
-                                    Send to Caregiver
-                                </Button>
                                 <Button
                                     variant="outline"
                                     onClick={() => handleSpeak(transcript)}
