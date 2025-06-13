@@ -16,86 +16,73 @@ lemmatizer = WordNetLemmatizer()
 
 # Emoji dictionary
 comprehension_dict = {
-  # Medical/Care instructions
+  # Medical/Care instructions (expanded)
   "medicine": "💊", "pill": "💊", "medication": "💊", "take": "👋",
-  "doctor": "👨‍⚕️", "nurse": "👩‍⚕️", "appointment": "📅", "hospital": "🏥",
+  "doctor": "👨‍⚕️", "nurse": "👩‍⚕️", "appointment": "📅", "hospital": "🏥", "clinic": "🏥",
   "therapy": "🧠", "exercise": "🏃", "physical": "🏃", "speech": "🗣️",
-  "blood": "🩸", "pressure": "🩸", "temperature": "🌡️", "heart": "❤️",
-  "xray": "📷", "scan": "📷", "test": "🔬", "results": "📄",
+  "blood": "🩸", "pressure": "🩸", "temperature": "🌡️", "heart": "❤️", "pulse": "💓",
+  "xray": "📷", "scan": "📷", "test": "🔬", "results": "📄", "injection": "💉", "shot": "💉",
+  "bandage": "🩹", "cast": "🦴", "crutches": "🩼", "oxygen": "💨", "allergy": "🤧",
+  "dizzy": "💫", "nausea": "🤢", "vomit": "🤮", "itchy": "🦟", "rash": "🔴", "cough": "🤧",
   
-  # Daily care instructions
-  "eat": "🍽️", "drink": "🥤", "water": "💧", "food": "🍽️", "meal": "🍽️",
-  "breakfast": "🌅🍽️", "lunch": "☀️🍽️", "dinner": "🌆🍽️",
-  "shower": "🚿", "bath": "🛁", "wash": "🧼", "brush": "🦷", "teeth": "🦷",
-  "sleep": "😴", "nap": "😴", "rest": "😴", "bed": "🛏️",
-  "bathroom": "🚽", "toilet": "🚽", "diaper": "👶", "change": "🔄",
-  "clothes": "👕", "dress": "👗", "shirt": "👕", "pants": "👖", "shoes": "👟",
+  # Daily care instructions (expanded)
+  "eat": "🍽️", "drink": "🥤", "water": "💧", "food": "🍽️", "meal": "🍽️", "snack": "🍎",
+  "breakfast": "🌅🍽️", "lunch": "☀️🍽️", "dinner": "🌆🍽️", "dessert": "🍰",
+  "shower": "🚿", "bath": "🛁", "wash": "🧼", "brush": "🦷", "teeth": "🦷", "hair": "💇",
+  "sleep": "😴", "nap": "😴", "rest": "😴", "bed": "🛏️", "awake": "👀", "wake": "⏰",
+  "bathroom": "🚽", "toilet": "🚽", "diaper": "👶", "change": "🔄", "clean": "🧹", "dirty": "🧼",
+  "clothes": "👕", "dress": "👗", "shirt": "👕", "pants": "👖", "shoes": "👟", "socks": "🧦",
+  "laundry": "👕🌀", "dishes": "🍽️🧼", "cook": "👩‍🍳", "shop": "🛒", "drive": "🚗", "work": "💼",
+  
+  # Basic Verbs (expanded)
+  "go": "➡️", "come": "⬅️", "stay": "⏹️", "sit": "🪑", "stand": "🧍", "walk": "🚶", "run": "🏃",
+  "give": "🤲", "take": "👋", "get": "🫳", "put": "⬇️", "bring": "➡️", "carry": "🏋️",
+  "make": "🛠️", "do": "🔨", "have": "🫴", "use": "🖐️", "need": "🙏", "want": "🤲",
+  "try": "🔧", "find": "🔍", "keep": "📥", "leave": "🚪", "open": "📂", "close": "📁",
+  "start": "⏯️", "stop": "⏹️", "wait": "⏳", "help": "🆘", "show": "👀", "look": "👀",
+  "ask": "🗣️", "tell": "💬", "talk": "💬", "speak": "💬", "listen": "👂", "hear": "👂",
+  "read": "📖", "write": "✍️", "draw": "🎨", "play": "🎮", "watch": "📺", "call": "📞",
+  "feel": "🤲", "hold": "🤝", "touch": "✋", "hug": "🫂", "love": "❤️", "like": "👍",
   
   # Questions others ask
-  "how": "❓", "what": "❓", "where": "❓", "when": "❓", "who": "❓",
-  "feel": "😊", "feeling": "😊", "pain": "😣", "hurt": "😣", "okay": "👍",
-  "need": "🤲", "want": "🤲", "like": "👍", "comfortable": "😌",
-  "hungry": "🍽️", "thirsty": "😰", "tired": "😴", "cold": "❄️", "hot": "🔥",
+  "how": "❓", "what": "❓", "where": "❓", "when": "❓", "who": "❓", "why": "❓", "which": "❓",
+  "feel": "😊", "feeling": "😊", "pain": "😣", "hurt": "😣", "okay": "👍", "wrong": "❌",
+  "need": "🤲", "want": "🤲", "like": "👍", "comfortable": "😌", "ready": "✅",
+  "hungry": "🍽️", "thirsty": "😰", "tired": "😴", "cold": "❄️", "hot": "🔥", "sick": "🤒",
   
-  # Time references others use
-  "now": "⏰", "today": "📅", "tomorrow": "📅", "morning": "🌅", 
-  "afternoon": "☀️", "evening": "🌇", "night": "🌙", "later": "⏰",
-  "minute": "⏰", "hour": "⏰", "soon": "⏰", "wait": "⏰",
+  # Time references
+  "now": "⏰", "today": "📅", "tomorrow": "📅", "yesterday": "📅⬅️", 
+  "morning": "🌅", "afternoon": "☀️", "evening": "🌇", "night": "🌙", 
+  "later": "⏰", "soon": "⏰", "early": "⏰⬆️", "late": "⏰⬇️",
+  "minute": "⏰", "hour": "⏰", "day": "📅", "week": "📅7️⃣", "month": "📅30️⃣", "year": "📅365️⃣",
   
   # Family/visitor communication
-  "family": "👪", "visit": "👋", "visitor": "👥", "call": "📞", "phone": "📱",
+  "family": "👪", "visit": "👋", "visitor": "👥", "call": "📞", "phone": "📱", "text": "💬",
   "mom": "👩", "dad": "👨", "mother": "👩", "father": "👨", "wife": "👩", "husband": "👨",
-  "son": "👦", "daughter": "👧", "child": "👶", "grandchild": "👶",
-  "friend": "👫", "neighbor": "🏠👥",
+  "son": "👦", "daughter": "👧", "child": "👶", "grandchild": "👶", "baby": "👶",
+  "friend": "👫", "neighbor": "🏠👥", "pet": "🐕", "dog": "🐕", "cat": "🐈",
   
-  # Location/movement instructions
-  "go": "➡️", "come": "⬅️", "stay": "⏹️", "sit": "🪑", "stand": "🧍", "walk": "🚶",
-  "room": "🏠", "kitchen": "🍳", "bedroom": "🛏️", "living": "🛋️",
-  "outside": "🌳", "inside": "🏠", "here": "📍", "there": "📍",
-  "home": "🏠", "car": "🚗", "wheelchair": "♿",
-  
-  # Safety/emergency
-  "help": "🆘", "emergency": "🚨", "911": "🚨", "fire": "🔥",
-  "safe": "✅", "danger": "⚠️", "careful": "⚠️", "stop": "✋",
-  
-  # Comfort/reassurance
-  "love": "❤️", "care": "❤️", "worry": "😟", "scared": "😨", "afraid": "😨",
-  "better": "📈", "worse": "📉", "same": "➡️", "improve": "📈",
-  "fine": "👍", "good": "👍", "bad": "👎", "sorry": "😔",
-  
-  # Instructions/requests
-  "please": "🙏", "can": "❓", "could": "❓", "would": "❓", "will": "⏩",
-  "open": "📂", "close": "📁", "turn": "🔄", "press": "👆", "push": "👆",
-  "give": "🤲", "bring": "➡️", "show": "👀", "look": "👀", "listen": "👂",
-  
-  # Yes/No and responses
-  "yes": "✅", "no": "❌", "maybe": "🤷", "ok": "👍",
-  "sure": "✅", "alright": "👍", "cannot": "❌", "not": "❌",
-  
-  # From emoji_words
-  "coffee": "☕",
-  "tea": "🍵",
-  "juice": "🧃",
-  "milk": "🥛",
-  "beer": "🍺",
-  "wine": "🍷",
-  "soda": "🥤",
-  "cup": "☕",
-  "glass": "🥛",
-  "bottle": "🍾",
-  "refresh": "💦",
-  "watermelon": "🍉",
-  "lemon": "🍋",
-  "ice": "🧊",
-  "bar": "🍸",
-  "party": "🎉",
-  "break": "⏸️",
-  "happy": "😄",
-  "?": "❓",
-  "!": "❗",
-  "let's": "🤝",
-  "you": "🫵",
-  "your": "🫵"
+  # Location/movement
+  "go": "➡️", "come": "⬅️", "stay": "⏹️", "sit": "🪑", "stand": "🧍", "walk": "🚶", "run": "🏃",
+  "room": "🏠", "kitchen": "🍳", "bedroom": "🛏️", "living": "🛋️", "garden": "🌳", "yard": "🌱",
+  "outside": "🌳", "inside": "🏠", "here": "📍", "there": "📍", "up": "⬆️", "down": "⬇️",
+  "home": "🏠", "car": "🚗", "wheelchair": "♿", "stairs": "🪜", "elevator": "🛗",
+  "help": "🆘", "emergency": "🚨", "911": "🚨", "fire": "🔥", "police": "👮", "danger": "⚠️",
+  "safe": "✅", "careful": "⚠️", "stop": "✋", "fall": "⚠️", "hurt": "🤕", "accident": "🚑",
+  "love": "❤️", "care": "❤️", "worry": "😔", "worry": "😟", "scared": "😨", "afraid": "😨",
+  "happy": "😄", "sad": "😢", "angry": "😠", "mad": "😠", "calm": "🧘", "relax": "😌",
+  "better": "📈", "worse": "📉", "same": "➡️", "improve": "📈", "heal": "❤️🩹", "well": "👍",
+  "please": "🙏", "can": "❓", "could": "❓", "would": "❓", "will": "⏩", "shall": "❓",
+  "open": "📂", "close": "📁", "turn": "🔄", "press": "👆", "push": "👆", "pull": "👇",
+  "give": "🤲", "bring": "➡️", "show": "👀", "look": "👀", "listen": "👂", "wait": "⏳",
+  "yes": "✅", "no": "❌", "maybe": "🤷", "ok": "👍", "okay": "👍", "alright": "👍",
+  "sure": "✅", "fine": "👍", "good": "👍", "bad": "👎", "cannot": "❌", "not": "❌",
+  "coffee": "☕", "tea": "🍵", "juice": "🧃", "milk": "🥛", "beer": "🍺", "wine": "🍷",
+  "soda": "🥤", "cup": "☕", "glass": "🥛", "bottle": "🍾", "refresh": "💦", "ice": "🧊",
+  "watermelon": "🍉", "lemon": "🍋", "apple": "🍎", "banana": "🍌", "bread": "🍞", "rice": "🍚",
+  "?": "❓", "!": "❗", "let's": "🤝", "you": "🫵", "your": "🫵", "me": "👈", "my": "👈",
+  "money": "💰", "keys": "🔑", "wallet": "👛", "remote": "📱", "light": "💡", "tv": "📺",
+  "book": "📖", "game": "🎮", "music": "🎵", "party": "🎉", "gift": "🎁", "pray": "🙏"
 }
 
 phrase_dict = {

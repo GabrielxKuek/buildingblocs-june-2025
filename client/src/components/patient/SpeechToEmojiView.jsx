@@ -316,25 +316,6 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
                 </p>
             </div>
 
-            {/* Service Status */}
-            <Card>
-                <CardContent className="p-4">
-                    <div className="flex items-center justify-center gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                            {deepgramAvailable ? <Wifi className="h-4 w-4 text-green-500" /> : <WifiOff className="h-4 w-4 text-orange-500" />}
-                            <span>Deepgram: {deepgramAvailable ? 'Available' : 'Unavailable'}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {isSupported ? <Mic className="h-4 w-4 text-green-500" /> : <MicOff className="h-4 w-4 text-red-500" />}
-                            <span>Browser Speech: {isSupported ? 'Supported' : 'Not Supported'}</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                            Using: {recordingMethod === 'deepgram' ? 'Deepgram API' : 'Browser Recognition'}
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
             {/* Input Mode Toggle */}
             <Card>
                 <CardContent className="p-4">
