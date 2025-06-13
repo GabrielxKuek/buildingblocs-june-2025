@@ -16,7 +16,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # init
-    from buildingblocsjune2025.api import initialize_app
+    from python_server.api import initialize_app
     initialize_app(app)
     
     return app

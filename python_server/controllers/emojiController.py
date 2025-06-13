@@ -3,12 +3,8 @@ from models.TmojiModel import convert_to_emojis
 
 app = Flask(__name__)
 
-@app.route('/api/convert-emoji', methods=['POST'])
-def convert_text_to_emoji():
-    try:
-        # Get JSON data from request body
-        data = request.get_json()
-        
+def convert_text_to_emoji(data):
+    try:        
         # Validate input
         if not data or 'text' not in data:
             return jsonify({'error': 'Text field is required in request body'}), 400

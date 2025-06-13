@@ -2,13 +2,17 @@
 */node_modules/*
 */package-lock.json
 *.crt
-server/buildingblocsjune2025/Lib/
-server/buildingblocsjune2025/Include/
-server/buildingblocsjune2025/Scripts/
-server/buildingblocsjune2025/share/
-server/buildingblocsjune2025/pyvenv.cfg
-server/buildingblocsjune2025/__pycache__/
-server/buildingblocsjune2025/etc
-server/buildingblocsjune2025/var
-server/buildingblocsjune2025/test_connection.py
+
+python_server/buildingblocsjune2025/Lib/
+python_server/buildingblocsjune2025/Include/
+python_server/buildingblocsjune2025/Scripts/
+python_server/buildingblocsjune2025/share/
+python_server/buildingblocsjune2025/pyvenv.cfg
+python_server/buildingblocsjune2025/__pycache__/
+python_server/buildingblocsjune2025/etc
+python_server/buildingblocsjune2025/var
+python_server/buildingblocsjune2025/test_connection.py
 .DS_Store
+
+# data file
+GoogleNews-vectors-negative300.bin.gz

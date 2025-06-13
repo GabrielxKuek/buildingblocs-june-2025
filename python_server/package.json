@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "python buildingblocsjune2025/api.py"
+    "dev": "python api.py"
   },
   "author": "",
   "license": "ISC",
