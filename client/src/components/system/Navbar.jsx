@@ -18,7 +18,7 @@ const Navbar = () => {
         <div className="flex justify-end px-4 py-2 border-b">
             <div className="flex items-center flex-1">
                 <img 
-                    src="/SpeakEasy.jpg" 
+                    src="/SpeakEasy.jpg"  
                     alt="Logo" 
                     className="h-8 w-auto"
                 />
