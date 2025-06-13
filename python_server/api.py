@@ -46,7 +46,7 @@ def convert_text_to_emoji_route():
 # def list_categories_route():
 #     try:
 #         output = list_categories()
-
+ 
 #         return output
 
 #     except Exception as e:
