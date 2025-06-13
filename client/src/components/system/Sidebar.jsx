@@ -4,7 +4,7 @@ import PropTypes from "prop-types"
 
 // components
 import { Button } from "@/components/ui/button"
-import { Plus, Settings, Home, ChevronLeft, ChevronRight, PackageOpen, Warehouse, Users, MessageSquare } from "lucide-react"
+import { Plus, Settings, Home, ChevronLeft, ChevronRight, PackageOpen, Warehouse, Users, MessageSquare, Mic } from "lucide-react"
 import { useState } from 'react';
 import CreateItemModalCaregiver from '@/components/caregiver/CreateItemModalCaregiver';
 import CreateItemModalPatient from '@/components/patient/CreateItemModalPatient';
@@ -23,6 +23,7 @@ const Sidebar = ({ onCreateItem }) => {
         } else if (location.pathname.startsWith('/patient')) {
             return [
                 { href: "/patient/items", label: "My Items", icon: PackageOpen },
+                { href: "/patient/speechToEmoji", label: "Speakmoji", icon: Mic },
             ];
         } else {
             return [

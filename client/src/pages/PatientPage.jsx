@@ -11,6 +11,7 @@ import {
     createPatientVideo,
     uploadPatientImage 
 } from "@/services/api/patient";
+import SpeechToEmojiView from "@/components/patient/SpeakmojiView";
 
 const PatientPage = ({ setCreateItemHandler }) => {
     const location = useLocation();
@@ -92,6 +93,7 @@ const PatientPage = ({ setCreateItemHandler }) => {
     }
 
     const isItemsPage = location.pathname === '/patient/items';
+    const isSpeakmojiPage = location.pathname === '/patient/speechToEmoji';
 
     if (isItemsPage) {
         return (
@@ -102,6 +104,10 @@ const PatientPage = ({ setCreateItemHandler }) => {
                 sendingItem={sendingItem}
             />
         );
+    } else if (isSpeakmojiPage) { 
+        return (
+            <SpeechToEmojiView/>
+        )
     }
 
     return <Navigate to="/patient/items" replace />;
