@@ -5,6 +5,7 @@ export const convertSpeechToText = async (req, res, next) => {
     const something = 'How are you feeling today?';
     res.locals.text = something;
     return next();
+    
   } catch (error) {
     console.error('Error in convertSpeechToText Controller:', error);
     res.status(500).json({ error: 'Internal Server Error' });

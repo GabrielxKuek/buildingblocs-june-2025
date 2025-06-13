@@ -11,3 +11,4 @@ server/buildingblocsjune2025/__pycache__/
 server/buildingblocsjune2025/etc
 server/buildingblocsjune2025/var
 server/buildingblocsjune2025/test_connection.py
+.DS_Store
