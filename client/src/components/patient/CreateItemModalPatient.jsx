@@ -87,7 +87,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
 
             await onCreateItem(itemData);
             
-            // Reset form
             if (formData.imagePreview) {
                 URL.revokeObjectURL(formData.imagePreview);
             }

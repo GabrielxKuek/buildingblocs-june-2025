@@ -19,10 +19,9 @@ const CreateItemModalCaregiver = ({
         name: '',
         type: 'image',
         selectedImageId: null,
-        progressType: 'floating' // 'floating' or 'top'
+        progressType: 'floating' 
     });
     
-    // Progress states
     const [progressState, setProgressState] = useState({
         visible: false,
         progress: 0,
@@ -34,7 +33,6 @@ const CreateItemModalCaregiver = ({
     const [loadingImages, setLoadingImages] = useState(false);
     const [error, setError] = useState('');
 
-    // Fetch available images when modal opens and video is selected
     useEffect(() => {
         if (show && formData.type === 'video') {
             fetchAvailableImages();
