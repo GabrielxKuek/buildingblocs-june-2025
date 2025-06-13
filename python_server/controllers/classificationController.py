@@ -36,8 +36,8 @@ def load_word_vectors():
     global wv
     if wv is None:
         print("Loading word2vec model..")
-        model_path = download_word2vec_model()
-        print("modelpath is", model_path)
+        # model_path = download_word2vec_model()
+        # print("modelpath is", model_path)
         # wv = KeyedVectors.load_word2vec_format(model_path, binary=True)
         wv = api.load("glove-wiki-gigaword-50")
         print("Model loaded successfully")
