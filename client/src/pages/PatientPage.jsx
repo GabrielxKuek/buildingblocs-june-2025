@@ -122,6 +122,7 @@ import { useLocation, Navigate, Routes, Route } from "react-router-dom";
 // components
 import PatientItemsView from "@/components/patient/PatientItemsView";
 import ActionsPage from "@/pages/ActionsPage";
+import SpeechToEmojiView from "@/components/patient/SpeechToEmojiView";
 
 import { 
     getPatientItems, 
@@ -181,7 +182,7 @@ const PatientPage = ({ setCreateItemHandler, onCreateActionVideo }) => {
         try {
             setSendingItem(item.id);
             const result = await sendItemToCaregiver(item);
-            alert(result.message || `Successfully sent "${item.name}" to caregiver!`);
+            alert(result.message || `Successfully sent "${item.name || 'message'}" to caregiver!`);
         } catch (error) {
             console.error('Error sending to caregiver:', error);
             alert('Failed to send item to caregiver');
@@ -238,6 +239,14 @@ const PatientPage = ({ setCreateItemHandler, onCreateActionVideo }) => {
                     <ActionsPage
                         onSendToCaregiver={handleSendToCaregiver}
                         onCreateActionVideo={handleCreateActionVideo}
+                    />
+                } 
+            />
+            <Route 
+                path="speechToEmoji" 
+                element={
+                    <SpeechToEmojiView
+                        onSendToCaregiver={handleSendToCaregiver}
                     />
                 } 
             />

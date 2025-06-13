@@ -447,3 +447,43 @@ export const uploadPatientImage = async (imageFile, itemName) => {
         throw error;
     }
 };
+
+// Convert text to emoji using backend
+export const convertTextToEmoji = async (text) => {
+    try {
+        console.log('🗣️ Converting text to emoji:', text);
+        
+        const response = await fetchWithTimeout(
+            getApiUrl(API_CONFIG.ENDPOINTS.CONVERT_TEXT_TO_EMOJI),
+            createRequestOptions('POST', { text }),
+            getTimeoutForOperation('default')
+        );
+
+        const data = await handleApiResponse(response);
+        console.log('✅ Emoji conversion result:', data);
+        
+        return data;
+    } catch (error) {
+        console.error('❌ Error converting text to emoji:', error);
+        throw new Error(`Failed to convert text to emoji: ${error.message}`);
+    }
+};
+
+// Send emoji message to caregiver (if needed)
+export const sendEmojiToCaregiver = async (messageData) => {
+    try {
+        // This would integrate with your existing caregiver communication system
+        console.log('📤 Sending emoji message to caregiver:', messageData);
+        
+        // For now, simulate the API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        return { 
+            success: true,
+            message: 'Emoji message sent to caregiver successfully'
+        };
+    } catch (error) {
+        console.error('❌ Error sending emoji to caregiver:', error);
+        throw error;
+    }
+};

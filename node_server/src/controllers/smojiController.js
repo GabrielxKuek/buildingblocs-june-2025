@@ -1,11 +1,16 @@
-
-
 export const convertSpeechToText = async (req, res, next) => {
   try {
-    const something = 'How are you feeling today?';
-    res.locals.text = something;
-    return next();
+    // Get text from request body instead of hardcoded value
+    const { text } = req.body;
     
+    if (!text) {
+      return res.status(400).json({ error: 'Text is required in request body' });
+    }
+    
+    console.log('Received text for emoji conversion:', text);
+    res.locals.text = text;
+    return next();
+        
   } catch (error) {
     console.error('Error in convertSpeechToText Controller:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -16,7 +21,9 @@ export const convertTextToEmoji = async (req, res, next) => {
   try {
     const { text } = res.locals;
 
-    // Need to call python server api
+    console.log('Converting text to emoji:', text);
+
+    // Call python server api
     const response = await fetch('http://localhost:5000/api/convert-emoji', {
       method: 'POST',
       headers: {
@@ -32,12 +39,18 @@ export const convertTextToEmoji = async (req, res, next) => {
     }
 
     const data = await response.json();
-    console.log(data);
+    console.log('Python server response:', data);
 
-    return res.status(200).json(data);
+    return res.status(200).json({
+      original_text: text,
+      emoji_text: data.emoji_text || data.result, // Handle different response formats
+      success: true
+    });
   } catch (error) {
-    console.error('Error in convertSpeechToText Controller:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error in convertTextToEmoji Controller:', error);
+    res.status(500).json({ 
+      error: 'Failed to convert text to emoji',
+      details: error.message 
+    });
   }
 }
-

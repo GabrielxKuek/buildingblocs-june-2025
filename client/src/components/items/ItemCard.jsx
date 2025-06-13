@@ -35,8 +35,15 @@ const ItemCard = ({ item, onClick }) => {
     );
 };
 
+// FIXED: PropTypes should expect an object, not a ReactNode
 ItemCard.propTypes = {
-    item: PropTypes.node.isRequired,
+    item: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        imageUrl: PropTypes.string.isRequired,
+        media_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }).isRequired,
     onClick: PropTypes.func.isRequired
 }
 

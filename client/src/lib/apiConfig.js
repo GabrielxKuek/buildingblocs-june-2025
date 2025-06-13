@@ -186,6 +186,8 @@
 
 // src/lib/apiConfig.js
 
+// src/lib/apiConfig.js
+
 // API Configuration
 const API_CONFIG = {
     // Base URL for the API - can be overridden by environment variables
@@ -220,6 +222,9 @@ const API_CONFIG = {
         FETCH_VIDEOS: '/media/fetchAllVideos',
         FETCH_VIDEOS_BY_PARENT: '/media/fetchVideosByParent', // New endpoint
         FETCH_MEDIA_HIERARCHY: '/media/fetchMediaHierarchy', // New endpoint
+        
+        // Speech to Emoji endpoints
+        CONVERT_TEXT_TO_EMOJI: '/smoji/translate', // New endpoint for speech to emoji
         
         // Future endpoints (to be implemented)
         REQUESTS: '/requests',
