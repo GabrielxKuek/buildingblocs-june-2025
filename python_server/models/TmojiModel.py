@@ -16,7 +16,6 @@ lemmatizer = WordNetLemmatizer()
 
 # Emoji dictionary
 comprehension_dict = {
-  # Medical/Care instructions (expanded)
   "medicine": "💊", "pill": "💊", "medication": "💊", "take": "👋",
   "doctor": "👨‍⚕️", "nurse": "👩‍⚕️", "appointment": "📅", "hospital": "🏥", "clinic": "🏥",
   "therapy": "🧠", "exercise": "🏃", "physical": "🏃", "speech": "🗣️",
@@ -24,8 +23,6 @@ comprehension_dict = {
   "xray": "📷", "scan": "📷", "test": "🔬", "results": "📄", "injection": "💉", "shot": "💉",
   "bandage": "🩹", "cast": "🦴", "crutches": "🩼", "oxygen": "💨", "allergy": "🤧",
   "dizzy": "💫", "nausea": "🤢", "vomit": "🤮", "itchy": "🦟", "rash": "🔴", "cough": "🤧",
-  
-  # Daily care instructions (expanded)
   "eat": "🍽️", "drink": "🥤", "water": "💧", "food": "🍽️", "meal": "🍽️", "snack": "🍎",
   "breakfast": "🌅🍽️", "lunch": "☀️🍽️", "dinner": "🌆🍽️", "dessert": "🍰",
   "shower": "🚿", "bath": "🛁", "wash": "🧼", "brush": "🦷", "teeth": "🦷", "hair": "💇",
@@ -33,8 +30,6 @@ comprehension_dict = {
   "bathroom": "🚽", "toilet": "🚽", "diaper": "👶", "change": "🔄", "clean": "🧹", "dirty": "🧼",
   "clothes": "👕", "dress": "👗", "shirt": "👕", "pants": "👖", "shoes": "👟", "socks": "🧦",
   "laundry": "👕🌀", "dishes": "🍽️🧼", "cook": "👩‍🍳", "shop": "🛒", "drive": "🚗", "work": "💼",
-  
-  # Basic Verbs (expanded)
   "go": "➡️", "come": "⬅️", "stay": "⏹️", "sit": "🪑", "stand": "🧍", "walk": "🚶", "run": "🏃",
   "give": "🤲", "take": "👋", "get": "🫳", "put": "⬇️", "bring": "➡️", "carry": "🏋️",
   "make": "🛠️", "do": "🔨", "have": "🫴", "use": "🖐️", "need": "🙏", "want": "🤲",
@@ -43,26 +38,18 @@ comprehension_dict = {
   "ask": "🗣️", "tell": "💬", "talk": "💬", "speak": "💬", "listen": "👂", "hear": "👂",
   "read": "📖", "write": "✍️", "draw": "🎨", "play": "🎮", "watch": "📺", "call": "📞",
   "feel": "🤲", "hold": "🤝", "touch": "✋", "hug": "🫂", "love": "❤️", "like": "👍",
-  
-  # Questions others ask
   "how": "❓", "what": "❓", "where": "❓", "when": "❓", "who": "❓", "why": "❓", "which": "❓",
   "feel": "😊", "feeling": "😊", "pain": "😣", "hurt": "😣", "okay": "👍", "wrong": "❌",
   "need": "🤲", "want": "🤲", "like": "👍", "comfortable": "😌", "ready": "✅",
   "hungry": "🍽️", "thirsty": "😰", "tired": "😴", "cold": "❄️", "hot": "🔥", "sick": "🤒",
-  
-  # Time references
   "now": "⏰", "today": "📅", "tomorrow": "📅", "yesterday": "📅⬅️", 
   "morning": "🌅", "afternoon": "☀️", "evening": "🌇", "night": "🌙", 
   "later": "⏰", "soon": "⏰", "early": "⏰⬆️", "late": "⏰⬇️",
   "minute": "⏰", "hour": "⏰", "day": "📅", "week": "📅7️⃣", "month": "📅30️⃣", "year": "📅365️⃣",
-  
-  # Family/visitor communication
   "family": "👪", "visit": "👋", "visitor": "👥", "call": "📞", "phone": "📱", "text": "💬",
   "mom": "👩", "dad": "👨", "mother": "👩", "father": "👨", "wife": "👩", "husband": "👨",
   "son": "👦", "daughter": "👧", "child": "👶", "grandchild": "👶", "baby": "👶",
   "friend": "👫", "neighbor": "🏠👥", "pet": "🐕", "dog": "🐕", "cat": "🐈",
-  
-  # Location/movement
   "go": "➡️", "come": "⬅️", "stay": "⏹️", "sit": "🪑", "stand": "🧍", "walk": "🚶", "run": "🏃",
   "room": "🏠", "kitchen": "🍳", "bedroom": "🛏️", "living": "🛋️", "garden": "🌳", "yard": "🌱",
   "outside": "🌳", "inside": "🏠", "here": "📍", "there": "📍", "up": "⬆️", "down": "⬇️",
@@ -82,29 +69,33 @@ comprehension_dict = {
   "watermelon": "🍉", "lemon": "🍋", "apple": "🍎", "banana": "🍌", "bread": "🍞", "rice": "🍚",
   "?": "❓", "!": "❗", "let's": "🤝", "you": "🫵", "your": "🫵", "me": "👈", "my": "👈",
   "money": "💰", "keys": "🔑", "wallet": "👛", "remote": "📱", "light": "💡", "tv": "📺",
-  "book": "📖", "game": "🎮", "music": "🎵", "party": "🎉", "gift": "🎁", "pray": "🙏"
+  "book": "📖", "game": "🎮", "music": "🎵", "party": "🎉", "gift": "🎁", "pray": "🙏",
+  "hello": "👋", "hi": "👋", "hey": "👋", "greetings": "👋",
+  "goodbye": "👋", "bye": "👋", "see you": "👋", "farewell": "👋",
+  "good morning": "🌅👋", "good afternoon": "☀️👋", "good evening": "🌆👋", "good night": "🌙😴",
+  "welcome": "🫂", "nice to meet you": "😊🤝", "howdy": "🤠👋",
+  "please": "🙏", "thank you": "🙏❤️", "thanks": "🙏", "you're welcome": "😊👍",
+  "excuse me": "🗣️", "pardon": "😅", "sorry": "😔", "my bad": "😅",
+  "bless you": "🤧🙏", "take care": "❤️⚠️", "have a good day": "😊📅",
+  "time": "⏰", "to": "➡️", 
 }
 
 phrase_dict = {
-  # Question patterns (lemmatized forms)
   "how be you": "❓🫵",
   "what be": "❓",
   "where be": "❓📍",
   "when be": "❓⏰",
   "who be": "❓👤",
   "why be": "❓",
-  
-  # Negation patterns (lemmatized)
   "do not": "❌",
   "be not": "❌",
   "will not": "❌⏩",
   "can not": "❌",
-  
-  # Modal patterns (lemmatized)
   "need to": "🙏",
   "want to": "🙏",
   "have to": "📋", 
   "go to": "➡️",
+  "it be": "👉",
   
   "take medicine": "🗣️💊",
   "feel pain": "😣💢", 
@@ -397,186 +388,3 @@ def convert_to_emojis(text):
 #   print()
 #   print(result)
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ===== 5th Attempt (synonymous word tracking) =====
-# --- Preprocessing ---
-# Change the synonymus words to the words in the emoji_words dictionary
-# def get_best_synonym(word, emoji_dict):
-#   synonyms = wordnet.synsets(word)
-#   for syn in synonyms:
-#     for lemma in syn.lemma_names():
-#       if lemma in emoji_dict:
-#         return lemma
-#   return word  # fallback to original if no match
-
-# def remove_contractions(sentence):
-#     return contractions.fix(sentence.lower())
-
-# # --- Main Function ---
-# def sentence_to_emoji(sentence):
-#   doc = nlp(sentence.lower())
-#   lemmatized_words = [token.lemma_ for token in doc]
-
-#   replaced_words = [
-#     get_best_synonym(word, emoji_phrases) for word in lemmatized_words
-#   ]
-
-#   # Reconstruct lemmatized sentence
-#   lemmatized_sentence = " ".join(replaced_words)
-#   output = []
-
-#   for phrase in sorted(emoji_phrases, key=len, reverse=True):
-#     if phrase in lemmatized_sentence:
-#       output.append(emoji_phrases[phrase])
-#       lemmatized_sentence = lemmatized_sentence.replace(phrase, "")  # avoid duplicate
-      
-#   return " ".join(output)
-
-
-
-# print(sentence_to_emoji("I want a cold drink and a glass of milk"))
-# print(sentence_to_emoji("Shall we drink water or have some hot coffee?"))
-
-# test_sentences = [
-#   "I am thirsty and want cold drinks",
-#   "Let's have some coffee and tea",
-#   "Party with beer and wine tonight",
-#   "Morning juice and a glass of milk",
-# ]
-
-# for sent in test_sentences:
-#   emojis = sentence_to_emoji(sent)
-#   print(f"Sentence: {sent}\nEmojis: {emojis}\n")
-
-
-# ===== 4th Attempt (Lemmatization included) =====
-# # Function to lemmatize a phrase
-# def lemmatize_phrase(phrase):
-#   return " ".join([lemmatizer.lemmatize(w) for w in phrase.split()])
-
-# def sentence_to_emoji(sentence):
-#   sentence = sentence.lower()
-#   sentence = re.sub(r'[^\w\s]', '', sentence)  # remove punctuation
-
-#   words = sentence.split()
-#   output = sentence
-
-#   # Create all possible 2–4 word phrases
-#   matched_phrases = {}
-#   for n in range(4, 1, -1):  # 4, 3, 2
-#     for i in range(len(words) - n + 1):
-#       phrase = " ".join(words[i:i+n])
-#       lemmatized = lemmatize_phrase(phrase)
-#       if lemmatized in emoji_phrases:
-#         matched_phrases[phrase] = emoji_phrases[lemmatized]
-
-#   # Replace phrases first (longest ones first)
-#   for phrase, emoji in matched_phrases.items():
-#     output = output.replace(phrase, emoji)
-
-#   # Lemmatize and replace single words
-#   final_words = []
-#   for word in output.split():
-#     lemma = lemmatizer.lemmatize(word)
-#     final_words.append(emoji_words.get(lemma, word))
-
-#   return " ".join(final_words)
-
-
-
-# ===== 5th Attempt (Phrase first approach) =====
-# def sentence_to_emoji(sentence):
-#   # Normalize the sentence
-#   sentence = sentence.lower()
-  
-#   # Handle phrases first
-#   for phrase, emoji in emoji_phrases.items():
-#     if phrase in sentence:
-#       sentence = sentence.replace(phrase, emoji)
-      
-#   # Lemmatize each word (handles Plurals like 'drinks' -> 'drink')
-#   words = sentence.split()
-#   translated = []
-#   for word in words: 
-#     lemma = lemmatizer.lemmatize(word)
-#     translated.append(emoji_words.get(lemma, word))
-    
-#   return " ".join(translated)
-
-
-# ===== 2nd attempt (words & phrases) ======
-# def sentence_to_emoji(sentence):
-#   sentence = sentence.lower()
-#   output = sentence
-
-#   # Handle phrases first
-#   for phrase, emoji in emoji_phrases.items():
-#     if phrase in output:
-#       output = output.replace(phrase, emoji)
-
-#   # Then replace single words
-#   words = output.split()
-#   translated = [emoji_words.get(word, word) for word in words]
-#   return " ".join(translated)
-
-
-# ===== 1st attempt (words) =====
-# # --- Helper functions ---
-# def normalize_word(word):
-#   return word.lower()
-
-
-# def sentence_to_emoji(sentence):
-#   words = sentence.split()
-#   emojis = []
-#   for word in words:
-#     norm_word = normalize_word(word)
-#     if norm_word in emoji_dict:
-#       emojis.append(emoji_dict[norm_word])
-#   return ' '.join(emojis)
-
-
-# # Test sentecnes with beverages focus
-# test_sentences = [
-#   "I am thirsty and want a cold drink",
-#   "Let's have some coffee and tea",
-#   "Party with beer and wine tonight",
-#   "Morning juice and a glass of milk",
-# ]
-
-# for sent in test_sentences:
-#   emojis = sentence_to_emoji(sent)
-#   print(f"Sentence: {sent}\nEmojis: {emojis}\n")
