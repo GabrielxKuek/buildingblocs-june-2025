@@ -368,23 +368,3 @@ def convert_to_emojis(text):
   # print(f'Final result: {result}')
   return " ".join(final_result)
 
-
-# test_sentences = [
-#   "It's time to take your medicine",
-#   "Do you need to use the bathroom?", 
-#   "How are you feeling today?",
-#   "Your daughter is coming to visit",
-#   "Can you drink some water please?",
-#   "The doctor wants to see you",
-#   "Are you having any pain?",
-#   "Let's get you dressed now",
-#   "Help is coming, don't worry!",
-#   "What would you like to eat?"
-# ]
-
-# for sentence in test_sentences:
-#   print(sentence)
-#   result = convert_to_emojis(sentence)
-#   print()
-#   print(result)
-  
