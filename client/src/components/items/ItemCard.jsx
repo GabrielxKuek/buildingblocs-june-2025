@@ -35,7 +35,6 @@ const ItemCard = ({ item, onClick }) => {
     );
 };
 
-// FIXED: PropTypes should expect an object, not a ReactNode
 ItemCard.propTypes = {
     item: PropTypes.shape({
         name: PropTypes.string.isRequired,

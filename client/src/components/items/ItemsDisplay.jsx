@@ -1,7 +1,5 @@
-// dependencies
 import PropTypes from "prop-types";
 
-// components
 import { useState } from "react";
 import ItemCard from "./ItemCard";
 import ItemModal from "./ItemModal";

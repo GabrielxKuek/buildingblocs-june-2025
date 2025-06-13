@@ -1,4 +1,3 @@
-// src/components/system/TopProgressBar.jsx
 import { useState, useEffect } from 'react';
 import { ImageIcon, Video, X, Brain } from 'lucide-react';
 
@@ -22,7 +21,6 @@ const TopProgressBar = ({
     }
   }, [progress, displayProgress]);
 
-  // Reset progress when not visible
   useEffect(() => {
     if (!isVisible) {
       setDisplayProgress(0);
@@ -30,7 +28,6 @@ const TopProgressBar = ({
     }
   }, [isVisible]);
 
-  // Handle completion
   useEffect(() => {
     if (progress === 100 && stage === 'complete') {
       setIsComplete(true);
@@ -72,20 +69,17 @@ const TopProgressBar = ({
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
-      {/* Main Progress Bar */}
       <div className="relative h-1">
         <div 
           className={`h-full bg-gradient-to-r ${config.gradient} transition-all duration-300 ease-out`}
           style={{ width: `${displayProgress}%` }}
         />
         
-        {/* Animated shimmer overlay */}
         <div 
           className={`absolute top-0 h-full bg-gradient-to-r ${config.gradient} opacity-60 blur-sm transition-all duration-300`}
           style={{ width: `${displayProgress}%` }}
         />
         
-        {/* Moving light effect */}
         {!isComplete && displayProgress > 0 && (
           <div 
             className={`absolute top-0 w-20 h-full bg-gradient-to-r from-transparent via-white/60 to-transparent transform transition-all duration-1000`}
@@ -97,11 +91,9 @@ const TopProgressBar = ({
         )}
       </div>
 
-      {/* Info Bar */}
       <div className={`${config.bgColor} backdrop-blur-sm border-b border-white/20 px-4 py-2.5`}>
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            {/* Animated Icon */}
             <div className={`w-7 h-7 rounded-full bg-gradient-to-r ${config.gradient} flex items-center justify-center relative`}>
               <Icon className="w-3.5 h-3.5 text-white" />
               {!isComplete && (
@@ -109,7 +101,6 @@ const TopProgressBar = ({
               )}
             </div>
             
-            {/* Status Text */}
             <div className="flex items-center gap-2 text-sm">
               <span className={`font-semibold ${config.textColor}`}>
                 {config.emoji} Generating {config.title.toLowerCase()}
@@ -130,23 +121,19 @@ const TopProgressBar = ({
             </div>
           </div>
           
-          {/* Right Side Info */}
           <div className="flex items-center gap-4">
-            {/* Time Estimate */}
             {!isComplete && (
               <span className="text-xs text-gray-500 hidden sm:block">
                 ⏱️ {type === 'video' ? '2-5 min' : '30-60s'} remaining
               </span>
             )}
             
-            {/* Success Message */}
             {isComplete && (
               <span className="text-xs text-green-600 font-medium animate-pulse">
                 ✅ Complete!
               </span>
             )}
             
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="p-1.5 hover:bg-white/50 rounded-md transition-colors group"
@@ -158,7 +145,6 @@ const TopProgressBar = ({
         </div>
       </div>
 
-      {/* CSS for shimmer animation */}
       <style jsx>{`
         @keyframes shimmer {
           0% { transform: translateX(-100%); }

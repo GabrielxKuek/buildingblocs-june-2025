@@ -1,8 +1,6 @@
-// dependencies
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-// components
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -38,14 +36,11 @@ const ImageUpload = ({
         try {
             validateFile(file);
             
-            // Clear any previous errors
             setError('');
             
-            // create preview URL
             const previewUrl = URL.createObjectURL(file);
             setPreview(previewUrl);
             
-            // call parent callback
             if (onImageChange) {
                 onImageChange(file, previewUrl);
             }
@@ -87,13 +82,11 @@ const ImageUpload = ({
         setPreview(null);
         setError('');
         
-        // clear file input
         const input = document.getElementById('image-upload-input');
         if (input) {
             input.value = '';
         }
         
-        // call parent callback
         if (onImageChange) {
             onImageChange(null, null);
         }
@@ -112,7 +105,6 @@ const ImageUpload = ({
             )}
             
             {preview ? (
-                // preview mode
                 <div className="relative">
                     <div className="aspect-square w-full max-w-xs mx-auto overflow-hidden rounded-lg border">
                         <img 

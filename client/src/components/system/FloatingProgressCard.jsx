@@ -1,4 +1,3 @@
-// src/components/system/FloatingProgressCard.jsx
 import { useState, useEffect } from 'react';
 import { ImageIcon, Video, X, Minimize2, CheckCircle, Sparkles } from 'lucide-react';
 
@@ -15,7 +14,6 @@ const FloatingProgressCard = ({
   const [displayProgress, setDisplayProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  // Smooth progress animation
   useEffect(() => {
     if (progress > displayProgress) {
       const timer = setTimeout(() => {
@@ -25,7 +23,6 @@ const FloatingProgressCard = ({
     }
   }, [progress, displayProgress]);
 
-  // Handle completion
   useEffect(() => {
     if (progress === 100 && stage === 'complete') {
       setIsComplete(true);
@@ -36,7 +33,6 @@ const FloatingProgressCard = ({
     }
   }, [progress, stage, onClose]);
 
-  // Reset states when visibility changes
   useEffect(() => {
     if (!isVisible) {
       setDisplayProgress(0);
@@ -131,7 +127,6 @@ const FloatingProgressCard = ({
             </div>
           </div>
         ) : (
-          /* Expanded View */
           <>
             {/* Header */}
             <div className="flex items-center justify-between mb-3">

@@ -1,6 +1,5 @@
 export const convertSpeechToText = async (req, res, next) => {
   try {
-    // Get text from request body instead of hardcoded value
     const { text } = req.body;
     
     if (!text) {
@@ -23,7 +22,6 @@ export const convertTextToEmoji = async (req, res, next) => {
 
     console.log('Converting text to emoji:', text);
 
-    // Call python server api
     const response = await fetch('http://localhost:5000/api/convert-emoji', {
       method: 'POST',
       headers: {
@@ -43,7 +41,7 @@ export const convertTextToEmoji = async (req, res, next) => {
 
     return res.status(200).json({
       original_text: text,
-      emoji_text: data.emoji_text || data.result, // Handle different response formats
+      emoji_text: data.emoji_text || data.result, 
       success: true
     });
   } catch (error) {

@@ -27,7 +27,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
-        // validate file type
         if (file) {
             if (!file.type.startsWith('image/')) {
                 setError('Please select a valid image file');
@@ -87,7 +86,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
 
             await onCreateItem(itemData);
             
-            // Reset form
             if (formData.imagePreview) {
                 URL.revokeObjectURL(formData.imagePreview);
             }
@@ -130,7 +128,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
 
                 <div>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Error Alert */}
                         {error && (
                             <Alert variant="destructive">
                                 <AlertCircle className="h-4 w-4" />
@@ -138,7 +135,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
                             </Alert>
                         )}
 
-                        {/* Item Name */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Item Name</Label>
                             <Input
@@ -152,11 +148,9 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
                             />
                         </div>
 
-                        {/* Image Upload */}
                         <div className="space-y-2">
                             <Label>Item Image</Label>
                             
-                            {/* Image Preview */}
                             {formData.imagePreview ? (
                                 <div className="relative">
                                     <div className="aspect-square w-full max-w-xs mx-auto overflow-hidden rounded-lg border">
@@ -178,7 +172,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
                                     </Button>
                                 </div>
                             ) : (
-                                /* Upload Area */
                                 <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors">
                                     <input
                                         type="file"
@@ -209,7 +202,6 @@ const CreateItemModalPatient = ({ show, onClose, onCreateItem }) => {
                             )}
                         </div>
 
-                        {/* Buttons */}
                         <div className="flex gap-3 pt-4">
                             <Button 
                                 type="button" 
