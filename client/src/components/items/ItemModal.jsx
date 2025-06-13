@@ -30,7 +30,6 @@ const ItemModal = ({
                 </DialogHeader>
 
                 <div className="space-y-6">
-                    {/* Main item media */}
                     <div className="aspect-square relative overflow-hidden rounded-lg">
                         {item.type === 'video' ? (
                             <video 
@@ -50,9 +49,7 @@ const ItemModal = ({
                         )}
                     </div>
 
-                    {/* Patient actions */}
                     <div className="space-y-3">
-                        {/* Primary actions row */}
                         <div className="flex gap-3">
                             <Button 
                                 onClick={() => onSendToCaretaker(item)}
@@ -72,7 +69,6 @@ const ItemModal = ({
                             </Button>
                         </div>
 
-                        {/* Actions button (only for images) */}
                         {item.type === 'image' && item.media_id && (
                             <Button 
                                 onClick={handleViewActions}

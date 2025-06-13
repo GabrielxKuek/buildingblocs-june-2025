@@ -1,8 +1,6 @@
-// dependencies
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-// components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -77,7 +75,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                 <p className="text-muted-foreground">Manage communication requests from patients</p>
             </div>
 
-            {/* Pending Requests Section */}
             <div className="mb-8">
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <Clock className="h-5 w-5 text-orange-500" />
@@ -124,7 +121,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                 )}
             </div>
 
-            {/* Completed Requests Section */}
             <div>
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <Check className="h-5 w-5 text-green-500" />
@@ -171,7 +167,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                 )}
             </div>
 
-            {/* Request Detail Dialog */}
             <Dialog open={!!selectedRequest} onOpenChange={closeModal}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
@@ -180,7 +175,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                     
                     {selectedRequest && (
                         <div className="space-y-6">
-                            {/* Error Alert */}
                             {error && (
                                 <Alert variant="destructive">
                                     <AlertCircle className="h-4 w-4" />
@@ -188,7 +182,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                                 </Alert>
                             )}
 
-                            {/* Request Item */}
                             <div className="text-center">
                                 <div className="aspect-square w-32 mx-auto overflow-hidden rounded-lg border mb-4">
                                     {selectedRequest.item.type === 'video' ? (
@@ -210,7 +203,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                                 {getStatusBadge(selectedRequest.status)}
                             </div>
 
-                            {/* Request Info */}
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
                                     <Calendar className="h-5 w-5 text-muted-foreground" />
@@ -221,7 +213,6 @@ const RequestsView = ({ requests = [], onApproveRequest, loading = false }) => {
                                 </div>
                             </div>
 
-                            {/* Action Buttons */}
                             {selectedRequest.status === 'pending' && (
                                 <div className="flex gap-3">
                                     <Button 

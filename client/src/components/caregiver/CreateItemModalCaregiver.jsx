@@ -44,7 +44,6 @@ const CreateItemModalCaregiver = ({
             setLoadingImages(true);
             setError('');
             
-            // Use the updated API config
             const images = await fetchAllImages();
             setAvailableImages(images);
 
@@ -82,17 +81,14 @@ const CreateItemModalCaregiver = ({
     };
 
     const handleImageSelect = (imageId) => {
-        console.log('Selecting image with ID:', imageId); // Debug log
+        console.log('Selecting image with ID:', imageId); 
         setFormData(prev => ({
             ...prev,
-            selectedImageId: imageId === prev.selectedImageId ? null : imageId // Toggle selection
+            selectedImageId: imageId === prev.selectedImageId ? null : imageId 
         }));
         setError('');
     };
       
-      
-
-    // Progress callback for AI generation
     const handleProgress = (progressData) => {
         setProgressState(prev => ({
             ...prev,
@@ -122,7 +118,6 @@ const CreateItemModalCaregiver = ({
             return;
         }
 
-        // Start progress tracking
         setProgressState({
             visible: true,
             progress: 0,
@@ -132,16 +127,14 @@ const CreateItemModalCaregiver = ({
         
         setError('');
         
-        // Close the modal to allow non-blocking progress
         onClose();
-
-        
+ 
         try {
             const selectedImage = getSelectedImage();
 
             console.log("Selected image before video generation:", selectedImage);
 
-            console.log("🧩 selectedImage object:", selectedImage); // ADD THIS LINE
+            console.log("🧩 selectedImage object:", selectedImage);
             
             const itemData = {
                 name: formData.name,
@@ -150,10 +143,8 @@ const CreateItemModalCaregiver = ({
                 imageUrl: formData.type === 'video' ? selectedImage?.media_url : null
             };
 
-            // Pass progress callback to the creation function
             await onCreateItem(itemData, handleProgress);
             
-            // Reset form
             setFormData({
                 name: '',
                 type: 'image',
@@ -164,7 +155,6 @@ const CreateItemModalCaregiver = ({
         } catch (error) {
             console.error('Error creating item:', error);
             setError(error.message || 'Failed to create item');
-            // Show error in a notification or alert
             alert(`Error: ${error.message || 'Failed to create item'}`);
         }
     };
@@ -204,7 +194,6 @@ const CreateItemModalCaregiver = ({
 
                     <div>
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* Error Alert */}
                             {error && (
                                 <Alert variant="destructive">
                                     <AlertCircle className="h-4 w-4" />
@@ -212,7 +201,6 @@ const CreateItemModalCaregiver = ({
                                 </Alert>
                             )}
 
-                            {/* Item Name */}
                             <div className="space-y-2">
                                 <Label htmlFor="name">Item Name</Label>
                                 <Input
@@ -226,7 +214,6 @@ const CreateItemModalCaregiver = ({
                                 />
                             </div>
 
-                            {/* Media Type Selection */}
                             <div className="space-y-2">
                                 <Label htmlFor="type">Media Type</Label>
                                 <Select
@@ -253,7 +240,6 @@ const CreateItemModalCaregiver = ({
                                 </Select>
                             </div>
 
-                            {/* Progress Type Selection */}
                             <div className="space-y-2">
                                 <Label htmlFor="progressType">Progress Display</Label>
                                 <Select
@@ -280,7 +266,6 @@ const CreateItemModalCaregiver = ({
                                 </Select>
                             </div>
 
-                            {/* Image Selection for Video Generation */}
                             {formData.type === 'video' && (
                                 <div className="space-y-3">
                                     <Label>Select Base Image for Video</Label>
@@ -300,7 +285,6 @@ const CreateItemModalCaregiver = ({
                                     ) : (
                                         <div className="grid grid-cols-3 gap-3 max-h-60 overflow-y-auto border rounded-lg p-3">
                                             {availableImages.map((image, index) => {
-                                                // Use a combination of media_id and index for uniqueness
                                                 const uniqueId = image.media_id || `image-${index}`;
                                                 const isSelected = formData.selectedImageId === uniqueId;
                                                 
@@ -326,7 +310,6 @@ const CreateItemModalCaregiver = ({
                                                             />
                                                         </div>
                                                         
-                                                        {/* Selection overlay with better visibility */}
                                                         {isSelected && (
                                                             <div className="absolute inset-0 bg-primary/30 flex items-center justify-center backdrop-blur-sm">
                                                                 <div className="bg-primary rounded-full p-2 shadow-lg">
@@ -335,7 +318,6 @@ const CreateItemModalCaregiver = ({
                                                             </div>
                                                         )}
                                                         
-                                                        {/* Image info overlay */}
                                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white text-xs p-2">
                                                             <div className="truncate font-medium">
                                                                 {image.media_name || image.prompt || 'Untitled'}
@@ -368,7 +350,6 @@ const CreateItemModalCaregiver = ({
                                 </div>
                             )}
 
-                            {/* Description */}
                             <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
                                 {formData.type === 'video' ? (
                                     <div className="flex items-start gap-2">
@@ -391,7 +372,6 @@ const CreateItemModalCaregiver = ({
                                 )}
                             </div>
 
-                            {/* Buttons */}
                             <div className="flex gap-3 pt-4">
                                 <Button 
                                     type="submit" 
@@ -419,7 +399,6 @@ const CreateItemModalCaregiver = ({
                 </DialogContent>
             </Dialog>
 
-            {/* Non-blocking Progress Components */}
             {formData.progressType === 'floating' ? (
                 <FloatingProgressCard
                     isVisible={progressState.visible}

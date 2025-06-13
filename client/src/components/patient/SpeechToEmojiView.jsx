@@ -1,5 +1,3 @@
-// src/components/patient/SpeechToEmojiView.jsx - Updated with Deepgram integration
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +6,6 @@ import { Mic, MicOff, Send, Volume2, Trash2, Copy, AlertCircle, Keyboard, Wifi, 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Spinner from "@/components/system/Spinner";
 
-// Import services
 import { convertTextToEmoji } from "@/services/api/patient";
 import deepgramService from "@/services/DeepGramService";
 
@@ -19,8 +16,8 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [history, setHistory] = useState([]);
-    const [inputMode, setInputMode] = useState('speech'); // 'speech' or 'text'
-    const [recordingMethod, setRecordingMethod] = useState('deepgram'); // 'deepgram' or 'browser'
+    const [inputMode, setInputMode] = useState('speech'); 
+    const [recordingMethod, setRecordingMethod] = useState('deepgram'); 
     
     const recognitionRef = useRef(null);
     const deepgramRecorderRef = useRef(null);
@@ -45,7 +42,6 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
         }
     }, []);
 
-    // Initialize speech recognition
     useEffect(() => {
         if (!isSecureContext) {
             setError('Speech recognition requires HTTPS or localhost. Please use text input instead.');
@@ -258,14 +254,13 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
             const result = await convertTextToEmoji(transcript);
             setEmojiResult(result.emoji_text);
             
-            // Add to history
             const newEntry = {
                 id: Date.now(),
                 originalText: transcript,
                 emojiText: result.emoji_text,
                 timestamp: new Date().toLocaleTimeString()
             };
-            setHistory(prev => [newEntry, ...prev.slice(0, 9)]); // Keep last 10 entries
+            setHistory(prev => [newEntry, ...prev.slice(0, 9)]);
             
         } catch (error) {
             console.error('Error converting to emoji:', error);
@@ -312,7 +307,7 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold mb-2">Speech to Emoji 🗣️➡️😊</h1>
                 <p className="text-muted-foreground">
-                    Speak naturally or type your words and we'll convert them to emojis for easier communication
+                    Speak naturally or type your words and we will convert them to emojis for easier communication
                 </p>
             </div>
 
@@ -516,7 +511,7 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
                                         </div>
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                        "{entry.originalText}"
+                                        {entry.originalText}
                                     </div>
                                     <div className="text-lg">
                                         {entry.emojiText}

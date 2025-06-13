@@ -6,7 +6,6 @@ const ProgressModal = ({ show, progress, allowCancel, onCancel }) => {
     return (
         <Dialog open={show}>
             <DialogContent className="w-full max-w-md" showCloseButton={false}>
-                {/* Required DialogTitle for accessibility */}
                 <DialogTitle className="text-lg font-semibold text-center">
                     {progress?.message || 'Processing...'}
                 </DialogTitle>
@@ -14,7 +13,6 @@ const ProgressModal = ({ show, progress, allowCancel, onCancel }) => {
                 <div className="space-y-4 mt-4">
                     {progress && (
                         <div className="space-y-2">
-                            {/* Progress bar */}
                             <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div 
                                     className="bg-blue-600 h-2 rounded-full transition-all duration-300"
@@ -22,12 +20,10 @@ const ProgressModal = ({ show, progress, allowCancel, onCancel }) => {
                                 />
                             </div>
                             
-                            {/* Percentage text */}
                             <p className="text-sm text-center text-muted-foreground">
                                 {progress.percentage || 0}% complete
                             </p>
                             
-                            {/* Progress message */}
                             {progress.message && progress.message !== (progress?.message || 'Processing...') && (
                                 <p className="text-sm text-center text-muted-foreground">
                                     {progress.message}

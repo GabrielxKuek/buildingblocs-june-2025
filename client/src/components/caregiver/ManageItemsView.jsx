@@ -1,8 +1,6 @@
-// dependencies
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-// components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -131,7 +129,6 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                 ))}
             </div>
 
-            {/* Edit Item Modal */}
             {selectedItem && (
                 <Dialog open={!!selectedItem} onOpenChange={closeModal}>
                     <DialogContent className="max-w-md">
@@ -142,7 +139,6 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                         </DialogHeader>
 
                         <div className="space-y-6">
-                            {/* Error Alert */}
                             {error && (
                                 <Alert variant="destructive">
                                     <AlertCircle className="h-4 w-4" />
@@ -150,7 +146,6 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                                 </Alert>
                             )}
 
-                            {/* Item Image */}
                             <div className="aspect-square relative overflow-hidden rounded-lg">
                                 {selectedItem.type === 'video' ? (
                                     <video 
@@ -169,7 +164,6 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                                 )}
                             </div>
 
-                            {/* Item Name - Edit Mode */}
                             {editMode ? (
                                 <div className="space-y-2">
                                     <Label htmlFor="itemName">Item Name</Label>
@@ -190,10 +184,8 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                                 </div>
                             )}
 
-                            {/* Action Buttons */}
                             <div className="space-y-3">
                                 {editMode ? (
-                                    // Edit Mode Buttons
                                     <div className="flex gap-2">
                                         <Button 
                                             onClick={handleSaveChanges}
@@ -211,7 +203,6 @@ const ManageItemsView = ({ items = [], onUpdateItem, onDeleteItem, onGenerateIma
                                         </Button>
                                     </div>
                                 ) : (
-                                    // View Mode Buttons
                                     <>
                                         <div className="flex gap-2">
                                             <Button 
