@@ -61,7 +61,7 @@
 
 from flask import Flask, request, jsonify
 from controllers.emojiController import convert_text_to_emoji
-from controllers.classificationController import load_word_vectors, match_category, list_categories, download_word2vec_model
+# from controllers.classificationController import load_word_vectors, match_category, list_categories, download_word2vec_model
 
 app = Flask(__name__)
 
@@ -87,34 +87,34 @@ def convert_text_to_emoji_route():
     except Exception as e:
         return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
-# text classification route
-@app.route('/api/match', methods=['GET'])
-def match_category_route():
-    try:
-        phrase = request.args.get("q", "").strip()
+# # text classification route
+# @app.route('/api/match', methods=['GET'])
+# def match_category_route():
+#     try:
+#         phrase = request.args.get("q", "").strip()
 
-        if not phrase:
-            return jsonify({"error": "Missing 'q' query parameter"}), 400
+#         if not phrase:
+#             return jsonify({"error": "Missing 'q' query parameter"}), 400
         
-        output = match_category(phrase)
+#         output = match_category(phrase)
 
-        return output
+#         return output
         
-    except Exception as e:
-        return jsonify({'error': f'Processing failed: {str(e)}'}), 500
+#     except Exception as e:
+#         return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
-@app.route('/api/categories')
-def list_categories_route():
-    try:
-        output = list_categories()
+# @app.route('/api/categories')
+# def list_categories_route():
+#     try:
+#         output = list_categories()
 
-        return output
+#         return output
 
-    except Exception as e:
-        return jsonify({'error': f'Processing failed: {str(e)}'}), 500
+#     except Exception as e:
+#         return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
 # For standalone testing
 if __name__ == '__main__':
-    download_word2vec_model()
-    load_word_vectors()
+    # download_word2vec_model()
+    # load_word_vectors()
     app.run(debug=True)
