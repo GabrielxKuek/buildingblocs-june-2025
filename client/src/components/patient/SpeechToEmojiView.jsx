@@ -1,16 +1,16 @@
-// dependencies
-import { useState, useRef, useEffect } from "react";
+// src/components/patient/SpeechToEmojiView.jsx - Updated with Deepgram integration
 
-// components
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Mic, MicOff, Send, Volume2, Trash2, Copy, AlertCircle, Keyboard } from "lucide-react";
+import { Mic, MicOff, Send, Volume2, Trash2, Copy, AlertCircle, Keyboard, Wifi, WifiOff } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Spinner from "@/components/system/Spinner";
 
-// api
+// Import services
 import { convertTextToEmoji } from "@/services/api/patient";
+import deepgramService from "@/services/DeepGramService";
 
 const SpeechToEmojiView = ({ onSendToCaregiver }) => {
     const [isListening, setIsListening] = useState(false);
@@ -20,13 +20,30 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
     const [error, setError] = useState('');
     const [history, setHistory] = useState([]);
     const [inputMode, setInputMode] = useState('speech'); // 'speech' or 'text'
+    const [recordingMethod, setRecordingMethod] = useState('deepgram'); // 'deepgram' or 'browser'
     
     const recognitionRef = useRef(null);
+    const deepgramRecorderRef = useRef(null);
+    const mediaStreamRef = useRef(null);
     const [isSupported, setIsSupported] = useState(false);
     const [permissionDenied, setPermissionDenied] = useState(false);
+    const [deepgramAvailable, setDeepgramAvailable] = useState(false);
 
     // Check if we're on HTTPS or localhost
     const isSecureContext = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+
+    // Check Deepgram availability
+    useEffect(() => {
+        const hasDeepgramKey = import.meta.env.VITE_DEEPGRAM_API_KEY;
+        setDeepgramAvailable(!!hasDeepgramKey);
+        
+        if (hasDeepgramKey) {
+            setRecordingMethod('deepgram');
+        } else {
+            setRecordingMethod('browser');
+            console.warn('Deepgram API key not found, falling back to browser speech recognition');
+        }
+    }, []);
 
     // Initialize speech recognition
     useEffect(() => {
@@ -40,13 +57,13 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognitionRef.current = new SpeechRecognition();
             
-            recognitionRef.current.continuous = false; // Changed to false for better reliability
+            recognitionRef.current.continuous = false;
             recognitionRef.current.interimResults = true;
             recognitionRef.current.lang = 'en-US';
             recognitionRef.current.maxAlternatives = 1;
             
             recognitionRef.current.onstart = () => {
-                console.log('Speech recognition started');
+                console.log('Browser speech recognition started');
                 setError('');
             };
             
@@ -67,41 +84,13 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
             };
             
             recognitionRef.current.onend = () => {
-                console.log('Speech recognition ended');
+                console.log('Browser speech recognition ended');
                 setIsListening(false);
             };
             
             recognitionRef.current.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                let errorMessage = '';
-                
-                switch(event.error) {
-                    case 'network':
-                        errorMessage = 'Network error. Please check your internet connection or try typing instead.';
-                        setInputMode('text');
-                        break;
-                    case 'not-allowed':
-                        errorMessage = 'Microphone access denied. Please allow microphone access in your browser settings.';
-                        setPermissionDenied(true);
-                        setInputMode('text');
-                        break;
-                    case 'no-speech':
-                        errorMessage = 'No speech detected. Please try speaking clearly or use text input.';
-                        break;
-                    case 'aborted':
-                        errorMessage = 'Speech recognition was cancelled.';
-                        break;
-                    case 'service-not-allowed':
-                        errorMessage = 'Speech service not allowed. Please try using text input.';
-                        setInputMode('text');
-                        break;
-                    default:
-                        errorMessage = `Speech recognition error: ${event.error}. Try using text input instead.`;
-                        setInputMode('text');
-                }
-                
-                setError(errorMessage);
-                setIsListening(false);
+                console.error('Browser speech recognition error:', event.error);
+                handleSpeechError(event.error);
             };
             
             setIsSupported(true);
@@ -115,32 +104,101 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
             if (recognitionRef.current) {
                 recognitionRef.current.stop();
             }
+            stopDeepgramRecording();
         };
     }, [isSecureContext]);
 
+    const handleSpeechError = (errorType) => {
+        let errorMessage = '';
+        
+        switch(errorType) {
+            case 'network':
+                errorMessage = 'Network error. Please check your internet connection or try typing instead.';
+                setInputMode('text');
+                break;
+            case 'not-allowed':
+                errorMessage = 'Microphone access denied. Please allow microphone access in your browser settings.';
+                setPermissionDenied(true);
+                setInputMode('text');
+                break;
+            case 'no-speech':
+                errorMessage = 'No speech detected. Please try speaking clearly or use text input.';
+                break;
+            case 'aborted':
+                errorMessage = 'Speech recognition was cancelled.';
+                break;
+            case 'service-not-allowed':
+                errorMessage = 'Speech service not allowed. Please try using text input.';
+                setInputMode('text');
+                break;
+            default:
+                errorMessage = `Speech recognition error: ${errorType}. Try using text input instead.`;
+                setInputMode('text');
+        }
+        
+        setError(errorMessage);
+        setIsListening(false);
+    };
+
     const requestMicrophonePermission = async () => {
         try {
-            await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamRef.current = stream;
             setPermissionDenied(false);
             setError('');
-            return true;
+            return stream;
         } catch (err) {
             console.error('Microphone permission denied:', err);
             setPermissionDenied(true);
             setError('Microphone access denied. Please allow microphone access and refresh the page.');
             setInputMode('text');
-            return false;
+            return null;
         }
     };
 
-    const startListening = async () => {
-        if (!isSecureContext) {
-            setError('Speech recognition requires HTTPS. Please use text input.');
-            return;
-        }
+    const startDeepgramRecording = async () => {
+        try {
+            const stream = await requestMicrophonePermission();
+            if (!stream) return;
 
+            console.log('Starting Deepgram recording...');
+            
+            const recorder = await deepgramService.transcribeStream(
+                stream,
+                (transcript, isFinal) => {
+                    console.log('Deepgram transcript:', transcript, 'Final:', isFinal);
+                    setTranscript(transcript);
+                },
+                (error) => {
+                    console.error('Deepgram error:', error);
+                    setError('Deepgram transcription failed. Falling back to browser recognition.');
+                    setRecordingMethod('browser');
+                }
+            );
+            
+            deepgramRecorderRef.current = recorder;
+            setIsListening(true);
+        } catch (error) {
+            console.error('Deepgram recording failed:', error);
+            setError('Failed to start Deepgram recording. Falling back to browser recognition.');
+            setRecordingMethod('browser');
+        }
+    };
+
+    const stopDeepgramRecording = () => {
+        if (deepgramRecorderRef.current) {
+            deepgramRecorderRef.current.stop();
+            deepgramRecorderRef.current = null;
+        }
+        if (mediaStreamRef.current) {
+            mediaStreamRef.current.getTracks().forEach(track => track.stop());
+            mediaStreamRef.current = null;
+        }
+        setIsListening(false);
+    };
+
+    const startBrowserRecording = async () => {
         if (recognitionRef.current && !isListening) {
-            // Check microphone permission first
             const hasPermission = await requestMicrophonePermission();
             if (!hasPermission) return;
 
@@ -151,17 +209,38 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
                 recognitionRef.current.start();
                 setIsListening(true);
             } catch (err) {
-                console.error('Failed to start speech recognition:', err);
+                console.error('Failed to start browser speech recognition:', err);
                 setError('Failed to start speech recognition. Please try text input instead.');
                 setInputMode('text');
             }
         }
     };
 
-    const stopListening = () => {
+    const stopBrowserRecording = () => {
         if (recognitionRef.current && isListening) {
             recognitionRef.current.stop();
             setIsListening(false);
+        }
+    };
+
+    const startListening = async () => {
+        if (!isSecureContext) {
+            setError('Speech recognition requires HTTPS. Please use text input.');
+            return;
+        }
+
+        if (recordingMethod === 'deepgram' && deepgramAvailable) {
+            await startDeepgramRecording();
+        } else {
+            await startBrowserRecording();
+        }
+    };
+
+    const stopListening = () => {
+        if (recordingMethod === 'deepgram') {
+            stopDeepgramRecording();
+        } else {
+            stopBrowserRecording();
         }
     };
 
@@ -175,6 +254,7 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
         setError('');
         
         try {
+            console.log('Converting text to emoji via backend:', transcript);
             const result = await convertTextToEmoji(transcript);
             setEmojiResult(result.emoji_text);
             
@@ -189,7 +269,7 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
             
         } catch (error) {
             console.error('Error converting to emoji:', error);
-            setError('Failed to convert text to emoji. Please try again.');
+            setError(`Failed to convert text to emoji: ${error.message}. Please check if the Python server is running.`);
         } finally {
             setLoading(false);
         }
@@ -235,6 +315,25 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
                     Speak naturally or type your words and we'll convert them to emojis for easier communication
                 </p>
             </div>
+
+            {/* Service Status */}
+            <Card>
+                <CardContent className="p-4">
+                    <div className="flex items-center justify-center gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                            {deepgramAvailable ? <Wifi className="h-4 w-4 text-green-500" /> : <WifiOff className="h-4 w-4 text-orange-500" />}
+                            <span>Deepgram: {deepgramAvailable ? 'Available' : 'Unavailable'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {isSupported ? <Mic className="h-4 w-4 text-green-500" /> : <MicOff className="h-4 w-4 text-red-500" />}
+                            <span>Browser Speech: {isSupported ? 'Supported' : 'Not Supported'}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                            Using: {recordingMethod === 'deepgram' ? 'Deepgram API' : 'Browser Recognition'}
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Input Mode Toggle */}
             <Card>
@@ -303,7 +402,7 @@ const SpeechToEmojiView = ({ onSendToCaregiver }) => {
                                 )}
                             </Button>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                {isListening ? 'Listening... Click to stop' : 
+                                {isListening ? `🎤 Listening with ${recordingMethod}... Click to stop` : 
                                  !isSupported ? 'Speech not supported' :
                                  !isSecureContext ? 'Requires HTTPS' :
                                  permissionDenied ? 'Microphone access denied' :
